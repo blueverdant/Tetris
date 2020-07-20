@@ -51,25 +51,8 @@
             paintfr(x, y, scale=1){
                 this.paints.fillRect(x*this.side, y*this.side, scale*this.side, scale*this.side)
             }
- 
-            // 游戏开始
-            gameStart(){
-                this.init()
-                this.run()
-            }
- 
-            // 初始化工作
-            init(){
-                this.initBackground()
-                this.initBlock()
-            }
- 
-            // 方块自动下落
-            run(){
-                this.ident = setInterval("self.down_speed_up()", this.speed)
-            }
- 
-            // 初始化地图
+
+                        // 初始化地图
             initBackground(){
                 this.paints.beginPath()
                 this.paints.fillStyle='#000000'        //地图填充颜色为黑色
@@ -80,7 +63,7 @@
                 }
                 this.paints.closePath()
             }
- 
+
             // 初始化方块的位置和颜色
             initBlock(){
                 this.paints.beginPath()
@@ -92,7 +75,8 @@
                 })
                 this.paints.closePath()
             }
- 
+             
+           
             // 利用数组画方块
             drawBlock(color){
                 this.paints.beginPath()
@@ -112,6 +96,28 @@
                     this.paints.closePath()
                 })
             }
+            // 初始化工作
+            init(){
+                this.initBackground()
+                this.initBlock()
+            }
+ 
+            // 游戏开始
+            gameStart(){
+                this.init()
+                this.run()
+            }
+ 
+
+ 
+            // 方块自动下落
+            run(){
+                this.ident = setInterval("self.down_speed_up()", this.speed)
+            }
+ 
+
+
+            /*
  
             // 生成随机数返回方块类型或颜色类型
             createRandom(type){
@@ -176,8 +182,10 @@
                     }
                 }
             }
+            */
  
             // 判断方块之间是否碰撞(下)，以及变形时是否越过下边界
+            /*
             judgeCollision_down(){
                 for(let i = 0; i < this.arr_bX.length; i++){
                     if (this.arr_bY[i] + 1 == this.height){ //变形时是否越过下边界
@@ -220,6 +228,7 @@
                 }
                 return true;
             }
+            */
  
  
             //方向键为下的加速函数
@@ -446,10 +455,10 @@
                 }
             }
         }
- 
+        /*
         let tetrisObj = new tetris()
         tetrisObj.gameStart()
-        
+        */
         //方向键功能函数
         document.onkeydown = (e) => {   
             if (tetrisObj.over)
