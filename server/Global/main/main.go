@@ -2,9 +2,12 @@ package main
 
 import (
 	_ "fmt"
+	"time"
+
 	"github.com/astaxie/beego"
 	"github.com/fv0008/AWS_Russia/server/Gamecontrollers"
 	"github.com/fv0008/AWS_Russia/server/Global"
+	"github.com/fv0008/AWS_Russia/server/Global/Game"
 )
 
 type MainController struct {
@@ -29,6 +32,8 @@ func (this *MainController) Single() {
 }
 func main() {
 	Global.Init_Logs()
+	go Game.GameRussia()
+	time.Sleep(2 * time.Second)
 	beego.Router("/", &MainController{},"get:Single")
 	beego.Router("/watch", &MainController{},"get:Watch")
 	beego.Router("/game", &MainController{},"get:Game")
@@ -40,5 +45,5 @@ func main() {
 	beego.Router("/IM/ws/socket", &Gamecontrollers.WebSocketController{}, "get:Socket")
 
 	beego.Run()
-	go GameRussia()
+
 }

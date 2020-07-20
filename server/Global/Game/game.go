@@ -1,29 +1,55 @@
-package main
+package Game
 import (
+	"encoding/json"
+	"fmt"
 	_ "fmt"
 	"math/rand"
 	"time"
+
+	"github.com/fv0008/AWS_Russia/server"
 )
 type GameInit struct {
-	side 	int;
-	width 	int
-	height 	int
-	speed 	int
-	num_block int
-	type_color string
-	ident int
-	direction  int
-	grade		int
-	over 		bool
-	arr_bX		[]int
-	arr_bY 		[]int
-	arr_store_X  []int
-	arr_store_Y []int
-	arr_store_color []string
+	Side            int      `json:"side"`
+	Width           int      `json:"width"`
+	Height          int      `json:"height"`
+	Speed           int      `json:"speed"`
+	Num_block       int      `json:"num_block"`
+	type_color      string   `json:"type_color"`
+	ident           int      `json:"ident"`
+	direction       int      `json:"direction"`
+	grade           int      `json:"grade"`
+	over            bool     `json:"over"`
+	arr_bX          []int    `json:"arr_bX"`
+	arr_bY          []int    `json:"arr_bY"`
+	arr_store_X     []int    `json:"arr_store_X"`
+	arr_store_Y     []int    `json:"arr_store_Y"`
+	arr_store_color []string `json:"arr_store_color"`
 
 }
 var gGame *GameInit
 var loop bool
+
+func initBackground(){
+
+}
+func initgame(event server.IM_protocol)server.IM_protocol {
+	gGame.Side=35
+	gGame.Width=10
+	gGame.Height =25
+	gGame.Speed =400
+	gGame.type_color = "000000"
+	//map black by client
+	initBackground()
+	initBlock()
+
+	jsons,error := json.Marshal(gGame)
+	if error != nil {
+		fmt.Println(error.Error())
+	}
+	fmt.Println(string(jsons))
+	event.Msg = string(jsons)
+	return event
+}
 
 func Down_speed_up_tick(){
  	flag_all_down := true
@@ -91,11 +117,11 @@ func move(dir_temp int){
 
 
 func createRandom(stype string){
-	 temp := gGame.width/2-1
+	 temp := gGame.Width/2-1
 
 	if stype == "rBlock" {
-		gGame.num_block =  rand.Intn(5)+1
-		switch(gGame.num_block){
+		gGame.Num_block =  rand.Intn(5)+1
+		switch(gGame.Num_block){
 			case 1:
 				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp,temp+1)
 				gGame.arr_bY=append(gGame.arr_bY,0,1,1,1)
@@ -155,7 +181,7 @@ func createRandom(stype string){
 
 func JudgeCollision_down() bool{
 	for  i := 0; i < len(gGame.arr_bX); i++ {
-		if (gGame.arr_bY[i] + 1 == gGame.height){
+		if (gGame.arr_bY[i] + 1 == gGame.Height){
 			return false
 		}
 		if (len(gGame.arr_store_X) != 0) {
@@ -176,13 +202,13 @@ func  ClearUnderBlock(){
  	var arr_row []int
  	var line_num int
 	if len(gGame.arr_store_X)!= 0 {
-		for j := gGame.height-1; j >= 0; j--{
+		for j := gGame.Height -1; j >= 0; j--{
 			for i := 0; i < len(gGame.arr_store_color); i++{
 				if gGame.arr_store_Y[i] == j {
 					arr_row = append(arr_row,i )
 				}
 			}
-			if len(arr_row) == gGame.width {
+			if len(arr_row) == gGame.Width {
 				line_num = j
 				break
 			}else{
@@ -190,7 +216,7 @@ func  ClearUnderBlock(){
 			}
 		}
 	}
-	if (len(arr_row) == gGame.width) {
+	if (len(arr_row) == gGame.Width) {
 		//计算成绩grade
 		gGame.grade++
 
@@ -212,7 +238,7 @@ func  ClearUnderBlock(){
 func JudgeCollision_other( num int) bool{
 	for i := 0; i < len(gGame.arr_bX); i++{
 		if (num == 1) {
-			if gGame.arr_bX[i] == gGame.width - 1{
+			if gGame.arr_bX[i] == gGame.Width - 1{
 				return false
 			}
 
@@ -234,6 +260,13 @@ func JudgeCollision_other( num int) bool{
 		}
 	}
 	return true;
+}
+
+func Tick(event server.IM_protocol)server.IM_protocol{
+	if"start" == event.Msg{
+		 return initgame(event)
+	}
+	return event
 }
 
 func GameRussia()  {

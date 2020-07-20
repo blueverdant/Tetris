@@ -57,6 +57,7 @@ function config(ret)
 
                 username.innerText = data.SocketId;
                 console.log("Join updateSocketId:",data);
+                postConnect("start")
                 break
             case 1: // BCJOIN
                 //li.innerText = data.SocketId + ' joined the chat room.';
@@ -101,7 +102,7 @@ function config(ret)
 function postConnect(action) {
 
     //var content = $('#sendbox').val();
-    var info =  {"Msg":action,"Type":5,}
+    var info =  {"Msg":action,"Type":4,}
     info.Timestamp = new Date().getTime()
     info.SocketId=SocketId
     info.Users={"To":0, "From":0,"SessKey":0, "ChatChanId":0}

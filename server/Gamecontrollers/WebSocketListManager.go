@@ -9,6 +9,8 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/fv0008/AWS_Russia/server"
 	"github.com/fv0008/AWS_Russia/server/Global"
+	"github.com/fv0008/AWS_Russia/server/Global/Game"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -194,11 +196,16 @@ func (this *WebSocketListController)broadcastWebSocket(event server.IM_protocol)
 	}
 }
 
-func (this *WebSocketListController)Game(event server.IM_protocol)  {
+func BCGame(event server.IM_protocol){
 
-	if event.Msg == "move"{
-		//Down_speed_up_tick()
+}
+
+func (this *WebSocketListController)Game(event server.IM_protocol)  {
+	if ""==event.Msg {
+		return
 	}
+	ret :=Game.Tick(event)
+	BCGame(ret)
 }
 func (this *WebSocketListController)HeartWebSocket(event server.IM_protocol) {
 	data, err := json.Marshal(event)
