@@ -3,12 +3,13 @@ package Gamecontrollers
 import (
 	"container/list"
 	"encoding/json"
+	"math/rand"
+	"time"
+
 	"github.com/astaxie/beego"
 	"github.com/fv0008/AWS_Russia/server"
 	"github.com/fv0008/AWS_Russia/server/Global"
 	"github.com/gorilla/websocket"
-	"math/rand"
-	"time"
 )
 
 var globaWebSocketListManager *WebSocketListController
@@ -196,7 +197,7 @@ func (this *WebSocketListController)broadcastWebSocket(event server.IM_protocol)
 func (this *WebSocketListController)Game(event server.IM_protocol)  {
 
 	if event.Msg == "move"{
-		down_speed_up_tick()
+		//Down_speed_up_tick()
 	}
 }
 func (this *WebSocketListController)HeartWebSocket(event server.IM_protocol) {

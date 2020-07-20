@@ -1,11 +1,8 @@
 package main
-
 import (
 	_ "fmt"
-	"time"
-
-	//"container/list"
 	"math/rand"
+	"time"
 )
 type GameInit struct {
 	side 	int;
@@ -28,9 +25,9 @@ type GameInit struct {
 var gGame *GameInit
 var loop bool
 
- func down_speed_up_tick(){
+func Down_speed_up_tick(){
  	flag_all_down := true
-	flag_all_down = judgeCollision_down()
+	flag_all_down = JudgeCollision_down()
 
 	if (flag_all_down) {
 		//gGame.initBackground()
@@ -45,12 +42,15 @@ var loop bool
 		}
 		gGame.arr_bX = gGame.arr_bX[0:len(gGame.arr_bX)]
 		gGame.arr_bY = gGame.arr_bY[0:len(gGame.arr_bY)]
-		 //gGame.initBlock()
+		initBlock()
 	}
-	 clearUnderBlock()
+	 ClearUnderBlock()
 	 //gGame.drawBlock(this.type_color)
 	 //gGame.drawStaticBlock()
 	 gameover()
+}
+func initBlock(){
+	createRandom("rColor")        //生成颜色字符串，
 }
 
 func gameover(){
@@ -63,12 +63,12 @@ func gameover(){
 }
 
 //方向键为左右的左移动函数
-	func  move(dir_temp int){
+func move(dir_temp int){
 		//initBackground()
 
 		if (dir_temp == 1) {                    //右
 			flag_all_right := true
-			flag_all_right = judgeCollision_other(1)
+			flag_all_right = JudgeCollision_other(1)
 
 			if flag_all_right {
 				for i := 0; i < len(gGame.arr_bY); i++{
@@ -77,7 +77,7 @@ func gameover(){
 			}
 		}else{
 			flag_all_left := true
-			flag_all_left = judgeCollision_other(-1)
+			flag_all_left = JudgeCollision_other(-1)
 
 			if flag_all_left {
 				for i:=0; i < len(gGame.arr_bY); i++{
@@ -98,7 +98,7 @@ func createRandom(stype string){
 		switch(gGame.num_block){
 			case 1:
 				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp,temp+1)
-				gGame.arr_bY=append((gGame.arr_bY,0,1,1,1)
+				gGame.arr_bY=append(gGame.arr_bY,0,1,1,1)
 				break
 			case 2:
 				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp-1,temp+1)
@@ -153,7 +153,7 @@ func createRandom(stype string){
 	}
 }
 
- func judgeCollision_down() bool{
+func JudgeCollision_down() bool{
 	for  i := 0; i < len(gGame.arr_bX); i++ {
 		if (gGame.arr_bY[i] + 1 == gGame.height){
 			return false
@@ -171,7 +171,7 @@ func createRandom(stype string){
 	}
 	return true
 }
-func  clearUnderBlock(){
+func  ClearUnderBlock(){
 //删除低层方块
  	var arr_row []int
  	var line_num int
@@ -209,7 +209,7 @@ func  clearUnderBlock(){
 	}
 }
 
-func judgeCollision_other( num int) bool{
+func JudgeCollision_other( num int) bool{
 	for i := 0; i < len(gGame.arr_bX); i++{
 		if (num == 1) {
 			if gGame.arr_bX[i] == gGame.width - 1{
@@ -241,6 +241,6 @@ func GameRussia()  {
 	gGame =	&GameInit{}
 	for;true == loop;{
 		time.Sleep(40 * time.Millisecond)
-		down_speed_up_tick()
+		Down_speed_up_tick()
 	}
 }
