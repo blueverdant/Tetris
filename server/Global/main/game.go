@@ -2,10 +2,10 @@ package main
 
 import (
 	_ "fmt"
-	"math"
-	"container/list"
-	"math/rand"
 	"time"
+
+	//"container/list"
+	"math/rand"
 )
 type GameInit struct {
 	side 	int;
@@ -22,7 +22,7 @@ type GameInit struct {
 	arr_bY 		[]int
 	arr_store_X  []int
 	arr_store_Y []int
-	arr_store_color []int
+	arr_store_color []string
 
 }
 var gGame *GameInit
@@ -33,20 +33,19 @@ var loop bool
 	flag_all_down = judgeCollision_down()
 
 	if (flag_all_down) {
-		gGame.initBackground()
-		for i := 0; i < gGame.arr_bY.length; i++{
+		//gGame.initBackground()
+		for i := 0; i < len(gGame.arr_bY); i++{
 			gGame.arr_bY[i] = gGame.arr_bY[i] + 1
 		}
 	}else{
-		for i:=0; i < gGame.arr_bX.length; i++ {
-			 gGame.arr_store_X.push(this.arr_bX[i])
-			 gGame.arr_store_Y.push(this.arr_bY[i])
-			 gGame.arr_store_color.push(this.type_color)
+		for i:=0; i < len(gGame.arr_bX); i++ {
+			gGame.arr_store_X = append(gGame.arr_store_X,gGame.arr_bX[i])
+			 gGame.arr_store_Y = append(gGame.arr_store_Y,gGame.arr_bY[i])
+			 gGame.arr_store_color=append(gGame.arr_store_color,gGame.type_color)
 		}
-
-		 gGame.arr_bX.splice(0,this.arr_bX.length)
-		 gGame.arr_bY.splice(0,this.arr_bY.length)
-		 gGame.initBlock()
+		gGame.arr_bX = gGame.arr_bX[0:len(gGame.arr_bX)]
+		gGame.arr_bY = gGame.arr_bY[0:len(gGame.arr_bY)]
+		 //gGame.initBlock()
 	}
 	 clearUnderBlock()
 	 //gGame.drawBlock(this.type_color)
@@ -55,7 +54,7 @@ var loop bool
 }
 
 func gameover(){
-	for i:=0; i < gGame.arr_store_X.length; i++{
+	for i:=0; i < len(gGame.arr_store_X); i++{
 		if (gGame.arr_store_Y[i] == 0) {
 			loop = false
 			gGame.over = true
@@ -63,37 +62,64 @@ func gameover(){
 	}
 }
 
+//方向键为左右的左移动函数
+	func  move(dir_temp int){
+		//initBackground()
+
+		if (dir_temp == 1) {                    //右
+			flag_all_right := true
+			flag_all_right = judgeCollision_other(1)
+
+			if flag_all_right {
+				for i := 0; i < len(gGame.arr_bY); i++{
+					gGame.arr_bX[i] = gGame.arr_bX[i]+1
+				}
+			}
+		}else{
+			flag_all_left := true
+			flag_all_left = judgeCollision_other(-1)
+
+			if flag_all_left {
+				for i:=0; i < len(gGame.arr_bY); i++{
+					gGame.arr_bX[i] = gGame.arr_bX[i]-1
+				}
+			}
+		}
+		//drawBlock(gGame.type_color)
+		//drawStaticBlock()
+	}
+
+
 func createRandom(stype string){
 	 temp := gGame.width/2-1
 
 	if stype == "rBlock" {
-		rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
-		gGame.num_block = math.round(math.random()*4+1)
+		gGame.num_block =  rand.Intn(5)+1
 		switch(gGame.num_block){
 			case 1:
-				gGame.arr_bX.push(temp,temp-1,temp,temp+1)
-				gGame.arr_bY.push(0,1,1,1)
+				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp,temp+1)
+				gGame.arr_bY=append((gGame.arr_bY,0,1,1,1)
 				break
 			case 2:
-				gGame.arr_bX.push(temp,temp-1,temp-1,temp+1)
-				gGame.arr_bY.push(1,0,1,1)
+				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp-1,temp+1)
+				gGame.arr_bY=append(gGame.arr_bY,1,0,1,1)
 				break
 			case 3:
-				gGame.arr_bX.push(temp,temp-1,temp+1,temp+2)
-				gGame.arr_bY.push(0,0,0,0)
+				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp+1,temp+2)
+				gGame.arr_bY=append(gGame.arr_bY,0,0,0,0)
 				break
 			case 4:
-				gGame.arr_bX.push(temp,temp-1,temp,temp+1)
-				gGame.arr_bY.push(0,0,1,1)
+				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp,temp+1)
+				gGame.arr_bY=append(gGame.arr_bY,0,0,1,1)
 				break
 			case 5:
-				gGame.arr_bX.push(temp,temp+1,temp,temp+1)
-				gGame.arr_bY.push(0,0,1,1)
+				gGame.arr_bX=append(gGame.arr_bX,temp,temp+1,temp,temp+1)
+				gGame.arr_bY=append(gGame.arr_bY,0,0,1,1)
 				break
 		}
 	}
 	if stype == "rColor"{
-		num_color := math.round(math.random()*8+1)
+		num_color := rand.Intn(8)+1
 
 		switch(num_color){
 			case 1:
@@ -149,33 +175,33 @@ func  clearUnderBlock(){
 //删除低层方块
  	var arr_row []int
  	var line_num int
-	if gGame.arr_store_X.length != 0 {
+	if len(gGame.arr_store_X)!= 0 {
 		for j := gGame.height-1; j >= 0; j--{
-			for i := 0; i < len(gGame.arr_store_color); i++){
+			for i := 0; i < len(gGame.arr_store_color); i++{
 				if gGame.arr_store_Y[i] == j {
-					arr_row.push(i)
+					arr_row = append(arr_row,i )
 				}
 			}
 			if len(arr_row) == gGame.width {
 				line_num = j
 				break
 			}else{
-				arr_row.splice(0, arr_row.length)
+				arr_row = arr_row[0:len(arr_row)]
 			}
 		}
 	}
-	if (arr_row.length == this.width) {
+	if (len(arr_row) == gGame.width) {
 		//计算成绩grade
 		gGame.grade++
 
-		for i := 0; i < arr_row.length; i++{
-			gGame.arr_store_X.splice(arr_row[i]-i, 1)
-			gGame.arr_store_Y.splice(arr_row[i]-i, 1)
-			gGame.arr_store_color.splice(arr_row[i]-i, 1)
+		for i := 0; i < len(arr_row); i++{
+			gGame.arr_store_X = gGame.arr_store_X[arr_row[i]-i:1]
+			gGame.arr_store_Y = gGame.arr_store_Y[arr_row[i]-i: 1]
+			gGame.arr_store_color = gGame.arr_store_color[arr_row[i]-i: 1]
 		}
 
 		//让上面的方块往下掉一格
-		for i := 0; i < gGame.arr_store_color.length; i++){
+		for i := 0; i < len(gGame.arr_store_color); i++{
 			if (gGame.arr_store_Y[i] < line_num) {
 				gGame.arr_store_Y[i] = gGame.arr_store_Y[i]+1
 			}
@@ -183,11 +209,13 @@ func  clearUnderBlock(){
 	}
 }
 
-func judgeCollision_other( num int64) bool{
+func judgeCollision_other( num int) bool{
 	for i := 0; i < len(gGame.arr_bX); i++{
 		if (num == 1) {
-			if (gGame.arr_bX[i] == gGame.width - 1)
+			if gGame.arr_bX[i] == gGame.width - 1{
 				return false
+			}
+
 		}
 		if (num == -1) {
 			if gGame.arr_bX[i] == 0 {
@@ -198,7 +226,7 @@ func judgeCollision_other( num int64) bool{
 		if (len(gGame.arr_store_X) != 0) {
 			for j := 0; j < len(gGame.arr_store_X); j++{
 				if (gGame.arr_bY[i] == gGame.arr_store_Y[j]) {
-					if (gGame.arr_bX[i] + num == gGame.arr_store_X[j]) {
+					if gGame.arr_bX[i] + num == gGame.arr_store_X[j] {
 						return false
 					}
 				}
@@ -208,10 +236,11 @@ func judgeCollision_other( num int64) bool{
 	return true;
 }
 
-func game()  {
+func GameRussia()  {
 	loop = true
 	gGame =	&GameInit{}
 	for;true == loop;{
+		time.Sleep(40 * time.Millisecond)
 		down_speed_up_tick()
 	}
 }

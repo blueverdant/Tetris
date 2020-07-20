@@ -136,6 +136,7 @@ func (this *WebSocketListController)chatroom() {
 				server.IM_EVENT_LEAVE,
 				server.IM_EVENT_MESSAGE:
 				this.HeartWebSocket(SocketMessage)
+				this.Game(SocketMessage)
 				break
 			case
 				server.IM_EVENT_BROADCAST_HEART,
@@ -192,7 +193,12 @@ func (this *WebSocketListController)broadcastWebSocket(event server.IM_protocol)
 	}
 }
 
+func (this *WebSocketListController)Game(event server.IM_protocol)  {
 
+	if event.Msg == "move"{
+		down_speed_up_tick()
+	}
+}
 func (this *WebSocketListController)HeartWebSocket(event server.IM_protocol) {
 	data, err := json.Marshal(event)
 	if err != nil {

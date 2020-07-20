@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "fmt"
+
 	"github.com/astaxie/beego"
 	"github.com/fv0008/AWS_Russia/server/Gamecontrollers"
 	"github.com/fv0008/AWS_Russia/server/Global"
@@ -40,5 +41,5 @@ func main() {
 	beego.Router("/IM/ws/socket", &Gamecontrollers.WebSocketController{}, "get:Socket")
 
 	beego.Run()
-	go game()
+	go GameRussia()
 }
