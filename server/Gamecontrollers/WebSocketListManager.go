@@ -4,6 +4,8 @@ import (
 	"container/list"
 	"encoding/json"
 	"github.com/astaxie/beego"
+	"github.com/fv0008/AWS_Russia/server"
+	"github.com/fv0008/AWS_Russia/server/Global"
 	"github.com/gorilla/websocket"
 	"math/rand"
 	"time"
@@ -13,7 +15,7 @@ var globaWebSocketListManager *WebSocketListController
 //带用户信息的websocket
 type SocketInfo struct {
 	SocketId	uint32
-	User     	lunarhookmodel.IM_protocol_user
+	User     	server.IM_protocol_user
 	Conn     	*websocket.Conn
 }
 type SocketId struct {
@@ -28,7 +30,7 @@ type WebSocketListController struct {
 	// Channel for exit users.
 	UnSocketChan chan UnSocketId
 	// Send events here to publish them.
-	MsgList	chan(lunarhookmodel.IM_protocol)
+	MsgList	chan(server.IM_protocol)
 	// Long polling waiting list.
 	ActiveSocketList *list.List
 	beego.Controller
@@ -51,7 +53,7 @@ func init(){
 	// Channel for exit users.
 	globaWebSocketListManager.UnSocketChan = make(chan UnSocketId, 100)
 	// Send events here to publish them.
-	globaWebSocketListManager.MsgList = make(chan lunarhookmodel.IM_protocol, 100)
+	globaWebSocketListManager.MsgList = make(chan server.IM_protocol, 100)
 
 	globaWebSocketListManager.ActiveSocketList = list.New()
 
@@ -79,7 +81,7 @@ func (this *WebSocketListController)SocketJoin(SocketId uint32,ws *websocket.Con
 		NewSocketId := r.Uint32()
 		if !this.IsExistSocketById(NewSocketId) {
 			//这里就是整个用户存在的循环体积，先将用户放入订阅队列
-			this.SocketChan <- SocketInfo{NewSocketId, lunarhookmodel.IM_protocol_user{}, ws}
+			this.SocketChan <- SocketInfo{NewSocketId, server.IM_protocol_user{}, ws}
 			//预定函数结尾让用户离开， 因为有可能强行kick，所以有单独函数
 			defer this.SocketLeave(NewSocketId)
 			//停止NewSocketId获取
@@ -94,7 +96,7 @@ func (this *WebSocketListController)SocketJoin(SocketId uint32,ws *websocket.Con
 		if err != nil {
 			return
 		}
-		var info lunarhookmodel.IM_protocol
+		var info server.IM_protocol
 		if err := json.Unmarshal([]byte(p), &info); err == nil {
 			this.MsgList <- this.NewMsg(info.Type, info.Users, info.SocketId,string(info.Msg))
 			//G.Logger.Info(info)
@@ -107,8 +109,8 @@ func (this *WebSocketListController)SocketJoin(SocketId uint32,ws *websocket.Con
 
 }
 
-func (this *WebSocketListController)NewMsg(ep lunarhookmodel.EventType, user lunarhookmodel.IM_protocol_user,SocketId uint32, msg string) lunarhookmodel.IM_protocol {
-	return lunarhookmodel.IM_protocol{ep, msg,SocketId,user, int(time.Now().Unix()) }
+func (this *WebSocketListController)NewMsg(ep server.EventType, user server.IM_protocol_user,SocketId uint32, msg string) server.IM_protocol {
+	return server.IM_protocol{ep, msg,SocketId,user, int(time.Now().Unix()) }
 }
 
 func (this *WebSocketListController)chatroom() {
@@ -118,8 +120,9 @@ func (this *WebSocketListController)chatroom() {
 			if !this.IsExistSocketById(JoinSocket.SocketId) {
 				this.ActiveSocketList.PushBack(JoinSocket) // Add user to the end of list.
 				// Publish a JOIN event.
-				this.MsgList <- this.NewMsg(lunarhookmodel.IM_EVENT_JOIN, JoinSocket.User,JoinSocket.SocketId,"")
-				this.MsgList <- this.NewMsg(lunarhookmodel.IM_EVENT_BROADCAST_JOIN, JoinSocket.User,JoinSocket.SocketId,"")
+				this.MsgList <- this.NewMsg(server.IM_EVENT_JOIN, JoinSocket.User,JoinSocket.SocketId,"")
+				this.MsgList <- this.NewMsg(server.IM_EVENT_BROADCAST_JOIN, JoinSocket.User,JoinSocket.SocketId,"")
+				this.MsgList <- this.NewMsg(server.IM_EVENT_MESSAGE, JoinSocket.User,JoinSocket.SocketId,"welcome")
 				Global.Logger.Info("New socket:", JoinSocket.SocketId, ";WebSocket:", JoinSocket.Conn != nil)
 			} else {
 				Global.Logger.Info("Old socket:", JoinSocket.SocketId, ";WebSocket:", JoinSocket.Conn != nil)
@@ -128,22 +131,22 @@ func (this *WebSocketListController)chatroom() {
 			//如果是心跳，单发
 			switch SocketMessage.Type {
 			case
-				lunarhookmodel.IM_EVENT_HEART,
-				lunarhookmodel.IM_EVENT_JOIN,
-				lunarhookmodel.IM_EVENT_LEAVE,
-				lunarhookmodel.IM_EVENT_MESSAGE:
+				server.IM_EVENT_HEART,
+				server.IM_EVENT_JOIN,
+				server.IM_EVENT_LEAVE,
+				server.IM_EVENT_MESSAGE:
 				this.HeartWebSocket(SocketMessage)
 				break
 			case
-				lunarhookmodel.IM_EVENT_BROADCAST_HEART,
-				lunarhookmodel.IM_EVENT_BROADCAST_JOIN,
-				lunarhookmodel.IM_EVENT_BROADCAST_LEAVE,
-				lunarhookmodel.IM_EVENT_BROADCAST_MESSAGE:
+				server.IM_EVENT_BROADCAST_HEART,
+				server.IM_EVENT_BROADCAST_JOIN,
+				server.IM_EVENT_BROADCAST_LEAVE,
+				server.IM_EVENT_BROADCAST_MESSAGE:
 				this.broadcastWebSocket(SocketMessage)
 				break
 			}
-			lunarhookmodel.NewArchive(SocketMessage)
-			if SocketMessage.Type == lunarhookmodel.IM_EVENT_MESSAGE {
+			server.NewArchive(SocketMessage)
+			if SocketMessage.Type == server.IM_EVENT_MESSAGE {
 				Global.Logger.Info("Message from", SocketMessage.Users.From, ";Msg:", SocketMessage.Msg)}
 
 		case LeaveSocket := <-this.UnSocketChan:
@@ -157,8 +160,8 @@ func (this *WebSocketListController)chatroom() {
 						Global.Logger.Error("WebSocket closed:", LeaveSocket)
 					}
 
-					this.MsgList  <- this.NewMsg(lunarhookmodel.IM_EVENT_LEAVE, sub.Value.(SocketInfo).User,LeaveSocket.SocketId, "") // Publish a LEAVE event.
-					this.MsgList  <- this.NewMsg(lunarhookmodel.IM_EVENT_BROADCAST_LEAVE, sub.Value.(SocketInfo).User,LeaveSocket.SocketId, "")
+					this.MsgList  <- this.NewMsg(server.IM_EVENT_LEAVE, sub.Value.(SocketInfo).User,LeaveSocket.SocketId, "") // Publish a LEAVE event.
+					this.MsgList  <- this.NewMsg(server.IM_EVENT_BROADCAST_LEAVE, sub.Value.(SocketInfo).User,LeaveSocket.SocketId, "")
 					break
 				}
 			}
@@ -167,7 +170,7 @@ func (this *WebSocketListController)chatroom() {
 }
 
 // broadcastWebSocket broadcasts messages to WebSocket users.
-func (this *WebSocketListController)broadcastWebSocket(event lunarhookmodel.IM_protocol) {
+func (this *WebSocketListController)broadcastWebSocket(event server.IM_protocol) {
 	data, err := json.Marshal(event)
 	if err != nil {
 		Global.Logger.Error("Fail to marshal event:", err)
@@ -190,7 +193,7 @@ func (this *WebSocketListController)broadcastWebSocket(event lunarhookmodel.IM_p
 }
 
 
-func (this *WebSocketListController)HeartWebSocket(event lunarhookmodel.IM_protocol) {
+func (this *WebSocketListController)HeartWebSocket(event server.IM_protocol) {
 	data, err := json.Marshal(event)
 	if err != nil {
 		Global.Logger.Error("Fail to marshal event:", err)

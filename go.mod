@@ -3,10 +3,11 @@ module github.com/fv0008/AWS_Russia
 go 1.14
 
 require (
+	github.com/Unknwon/goconfig v0.0.0-20191126170842-860a72fb44fd // indirect
 	//github.com/Unknwon/goconfig v0.0.0-20191126170842-860a72fb44fd // indirect
 	//github.com/aliyun/alibaba-cloud-sdk-go v1.61.13
 	github.com/astaxie/beego v1.12.1
-	github.com/beego/i18n v0.0.0-20161101132742-e9308947f407 // indirect
+	github.com/beego/i18n v0.0.0-20161101132742-e9308947f407
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gorilla/websocket v1.4.1
 	github.com/json-iterator/go v1.1.9 // indirect

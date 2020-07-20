@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+{{if .IsWebSocket}}
+    <script src="/static/js/jquery-1.10.1.min.js"></script>
+    <script src="/static/js/websocket.js"></script>
+{{end}}
 <head>
     <meta charset="UTF-8">
-    <title>es6-重构俄罗斯方块(基于canvas)</title>
+    <title>AWS重构俄罗斯方块游戏端(基于canvas)</title>
     <style type="text/css">
         #tetris{ margin: 10px 250px;}
     </style>
 </head>
 <body>
+<h3>"username": <span id="uname">{{.UserName}}</span></h3>
+<h3>"action": <span id="action"></span></h3>
+<h3>"Notify": <span id="notify"></span></h3>
     <canvas width="700" height="950" id="tetris"></canvas>
     <div id="text" style='color: red;font-size: 30px;'>当前分数：0</div>
     <script type="text/javascript">
@@ -451,21 +458,25 @@
             switch(e.keyCode){
                 case 40:  // 方向为下
                     tetrisObj.down_speed_up()
+                    postConnect("down")
                     break
                 case 32:  // 空格换方向
                     tetrisObj.initBackground()        //重画地图
                     tetrisObj.up_change_direction(tetrisObj.num_blcok)
                     tetrisObj.drawBlock(tetrisObj.type_color)
+                    postConnect("change")
                     break
                 case 37:  // 方向为左
                     tetrisObj.initBackground()
                     tetrisObj.move(-1)
                     tetrisObj.drawBlock(tetrisObj.type_color)
+                    postConnect("right")
                     break
                 case 39:  // 方向为右
                     tetrisObj.initBackground()
                     tetrisObj.move(1)
                     tetrisObj.drawBlock(tetrisObj.type_color)
+                    postConnect("left")
                     break
             }    
         }

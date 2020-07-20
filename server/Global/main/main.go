@@ -3,6 +3,8 @@ package main
 import (
 	_ "fmt"
 	"github.com/astaxie/beego"
+	"github.com/fv0008/AWS_Russia/server/Gamecontrollers"
+	"github.com/fv0008/AWS_Russia/server/Global"
 )
 
 type MainController struct {
@@ -15,17 +17,27 @@ func (c *MainController) URLMapping() {
 	c.Mapping("Single", c.Single)
 }
 func (this *MainController) Game() {
-	this.TplName = "h5Russia_client.html" // version 1.6 use this.TplName = "index.tpl"
+	this.Data["IsWebSocket"] = true
+	this.TplName = "h5Russia_server.html" // version 1.6 use this.TplName = "index.tpl"
 }
 func (this *MainController) Watch() {
-	this.TplName = "h5Russia_server.html" // version 1.6 use this.TplName = "index.tpl"
+	this.Data["IsWebSocket"] = true
+	this.TplName = "h5Russia_client.html" // version 1.6 use this.TplName = "index.tpl"
 }
 func (this *MainController) Single() {
 	this.TplName = "h5Russia_single.html" // version 1.6 use this.TplName = "index.tpl"
 }
 func main() {
+	Global.Init_Logs()
 	beego.Router("/", &MainController{},"get:Single")
 	beego.Router("/watch", &MainController{},"get:Watch")
 	beego.Router("/game", &MainController{},"get:Game")
+	beego.Router("/IM/", &Gamecontrollers.AppController{})
+	beego.Router("/IM/join", &Gamecontrollers.AppController{}, "post:Join")
+
+	// WebSocket.
+	beego.Router("/IM/ws", &Gamecontrollers.WebSocketController{})
+	beego.Router("/IM/ws/socket", &Gamecontrollers.WebSocketController{}, "get:Socket")
+
 	beego.Run()
 }
