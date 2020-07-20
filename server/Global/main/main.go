@@ -40,4 +40,5 @@ func main() {
 	beego.Router("/IM/ws/socket", &Gamecontrollers.WebSocketController{}, "get:Socket")
 
 	beego.Run()
+	go game()
 }
