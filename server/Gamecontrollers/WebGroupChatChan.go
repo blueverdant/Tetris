@@ -2,10 +2,9 @@ package Gamecontrollers
 
 import (
 	"container/list"
-	"time"
-	"github.com/fv0008/AWS_Russia/server"
-
 	"github.com/astaxie/beego"
+	"github.com/fv0008/AWS_Russia/server"
+	"time"
 )
 
 
@@ -22,8 +21,8 @@ type GroupChatChan struct{
 
 
 
-func (this *GroupChatChan)NewGroupChatMsg(ep lunarhookmodel.EventType, user lunarhookmodel.IM_protocol_user,Socketid uint32, msg string) lunarhookmodel.IM_protocol {
-	return ImArchive.IM_protocol{ep, msg,Socketid,user, int(time.Now().Unix())}
+func (this *GroupChatChan)NewGroupChatMsg(ep server.EventType, user server.IM_protocol_user,Socketid uint32, msg string) server.IM_protocol {
+	return server.IM_protocol{ep, msg,Socketid,user, int(time.Now().Unix())}
 }
 
 
@@ -50,18 +49,18 @@ func (this *GroupChatChan) GroupChatChanAcitve() {
 			//如果是心跳，单发
 			switch Message.Type {
 			case
-				lunarhookmodel.IM_EVENT_HEART,
-				lunarhookmodel.IM_EVENT_JOIN,
-				lunarhookmodel.IM_EVENT_LEAVE,
-				lunarhookmodel.IM_EVENT_MESSAGE:
+				server.IM_EVENT_HEART,
+				server.IM_EVENT_JOIN,
+				server.IM_EVENT_LEAVE,
+				server.IM_EVENT_MESSAGE:
 				//this.HeartWebSocket(event)
 				beego.Info("ChatChinMsg from", Message.Users.From, ";Msg:", Message.Msg)
 				break
 			case
-				lunarhookmodel.IM_EVENT_BROADCAST_HEART,
-				lunarhookmodel.IM_EVENT_BROADCAST_JOIN,
-				lunarhookmodel.IM_EVENT_BROADCAST_LEAVE,
-				lunarhookmodel.IM_EVENT_BROADCAST_MESSAGE:
+				server.IM_EVENT_BROADCAST_HEART,
+				server.IM_EVENT_BROADCAST_JOIN,
+				server.IM_EVENT_BROADCAST_LEAVE,
+				server.IM_EVENT_BROADCAST_MESSAGE:
 				//this.broadcastWebSocket(event)
 				beego.Info("ChatChinBCMsg from", Message.Users.From, ";Msg:", Message.Msg)
 				break
@@ -86,7 +85,7 @@ func (this *GroupChatChan)init() {
 	this.JoinGroupChatChan = make(chan SocketId, 10)
 	this.LeaveGroupChatChan = make(chan UnSocketId,10)
 	// Send events here to publish them.
-	this.GroupMsgList = make(chan lunarhookmodel.IM_protocol, 10)
+	this.GroupMsgList = make(chan server.IM_protocol, 10)
 	// Long polling waiting list.
 	this.ActiveGroupChatChan = list.New()
 

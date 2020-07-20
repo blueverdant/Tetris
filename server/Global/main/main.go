@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	_ "fmt"
@@ -10,22 +10,22 @@ type MainController struct {
 }
 
 func (c *MainController) URLMapping() {
-	c.Mapping("game", c.game)
-	c.Mapping("watch", c.watch)
-	c.Mapping("single", c.single)
+	c.Mapping("Game", c.Game)
+	c.Mapping("Watch", c.Watch)
+	c.Mapping("Single", c.Single)
 }
-func (this *MainController) game() {
+func (this *MainController) Game() {
 	this.TplName = "h5Russia_client.html" // version 1.6 use this.TplName = "index.tpl"
 }
-func (this *MainController) watch() {
+func (this *MainController) Watch() {
 	this.TplName = "h5Russia_server.html" // version 1.6 use this.TplName = "index.tpl"
 }
-func (this *MainController) single() {
+func (this *MainController) Single() {
 	this.TplName = "h5Russia_single.html" // version 1.6 use this.TplName = "index.tpl"
 }
 func main() {
-	beego.Router("/", &MainController{},"get:single")
-	beego.Router("/watch", &MainController{},"get:watch")
-	beego.Router("/game", &MainController{},"get:game")
-	return
+	beego.Router("/", &MainController{},"get:Single")
+	beego.Router("/watch", &MainController{},"get:Watch")
+	beego.Router("/game", &MainController{},"get:Game")
+	beego.Run()
 }
