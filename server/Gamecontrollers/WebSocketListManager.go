@@ -62,7 +62,7 @@ func init(){
 
 
 	go globaWebSocketListManager.chatroom()
-	go NetRussia()
+	go globaWebSocketListManager.NetRussia()
 }
 
 func (this *WebSocketListController)SocketLeave(SocketId uint32) {
@@ -203,16 +203,22 @@ func  (this *WebSocketListController)BCGame(event server.IM_protocol){
 func (this *WebSocketListController)NetRussia()  {
 	for{
 		event := server.IM_protocol{}
-		ret :=Game.Start(event)
-		this.BCGame(ret)
+		ret,b :=Game.Start(event)
+		if true==b{
+			this.BCGame(ret)
+		}
+
 	}
 }
 func (this *WebSocketListController)Game(event server.IM_protocol)  {
 	if ""==event.Msg {
 		return
 	}
-	ret :=Game.Start(event)
-	this.BCGame(ret)
+	ret ,t:=Game.Start(event)
+	if true==t {
+		this.BCGame(ret)
+	}
+
 }
 func (this *WebSocketListController)HeartWebSocket(event server.IM_protocol) {
 	data, err := json.Marshal(event)

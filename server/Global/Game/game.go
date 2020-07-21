@@ -41,14 +41,17 @@ func initgame(event server.IM_protocol)server.IM_protocol {
 	//map black by client
 	initBackground()
 	initBlock()
-
-
-
+	//开启游戏循环，尝试第一个tick
+	loop = true;
+	Down_speed_up_tick()
+	field := make(map[string]interface{}, 0)
 	jsons,error := json.Marshal(gGame)
 	if error != nil {
 		fmt.Println(error.Error())
 	}
-	fmt.Println(string(jsons))
+	json.Unmarshal([]byte(jsons), &field)
+	field["action"] = "start"
+	jsons,error= json.Marshal(field)
 	event.Msg = string(jsons)
 	return event
 }
@@ -265,15 +268,15 @@ func JudgeCollision_other( num int) bool{
 	return true;
 }
 
-func Start(event server.IM_protocol)server.IM_protocol{
+func Start(event server.IM_protocol)(server.IM_protocol,bool){
 	if false==loop && "start" == event.Msg{
-		return initgame(event)
+		return initgame(event),true
 	}
 	if true==loop {
 
 	}
 	//这里返回要客户端重新开始游戏
-	return event
+	return event,false
 }
 
 func GameRussia()  {

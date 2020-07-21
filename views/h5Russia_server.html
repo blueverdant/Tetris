@@ -115,7 +115,7 @@
                 var r = GetMsg()
                 if (""!=r) {
                     r = JSON.parse(r)
-                    if(r.action == "tick")
+                    if(r.action == "start")
                     {
                         this.side = r.side
                         this.width = r.width            // 一行包含的方块数
@@ -128,9 +128,15 @@
                         this.over = r.over           // 游戏是否结束
                         this.arr_bX = r.arr_bX             // 存放当前方块的X坐标
                         this.arr_bY = r.arr_bY              // 存放当前方块的Y坐标
-                        this.arr_store_X = r.arr_store_X          // 存放到达底部所有方块的X坐标
-                        this.arr_store_Y = r.arr_store_Y          // 存放到达底部所有方块的Y坐标
-                        this.arr_store_color =r.arr_store_color      // 存放到达底部所有方块的颜色
+                        if (null!= r.arr_store_X){
+                            this.arr_store_X = r.arr_store_X          // 存放到达底部所有方块的X坐标
+                        }
+                        if (null!= r.arr_store_Y){
+                            this.arr_store_Y = r.arr_store_Y          // 存放到达底部所有方块的Y坐标
+                        }
+                        if (null!= r.arr_store_color){
+                            this.arr_store_color = r.arr_store_color          // 存放到达底部所有方块的颜色
+                        }
                     }
                     self.down_speed_up()
                 }
@@ -252,6 +258,7 @@
  
             //方向键为下的加速函数
             down_speed_up(){
+                /*
                 let flag_all_down = true
                 flag_all_down = this.judgeCollision_down()
                 
@@ -272,6 +279,7 @@
                     this.arr_bY.splice(0,this.arr_bY.length)
                     this.initBlock()
                 }
+                */
                 this.clearUnderBlock()
                 this.drawBlock(this.type_color)
                 this.drawStaticBlock()
