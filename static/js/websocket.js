@@ -3,6 +3,17 @@ var heart
 var reconnectcount = 0
 var timeouthandle
 var SocketId
+var msg = new Array()
+
+function GetMsg()
+{
+    if (msg.length > 0){
+        var r = msg[0]
+        msg = msg.slice(1,msg.length)
+        return r
+    }
+    return ""
+}
 
 function reconnect(){
     clearInterval(heart)
@@ -75,6 +86,15 @@ function config(ret)
                 var Notify = document.getElementById('notify');
 
                 Notify.innerText = data.Msg;
+                try {
+                    var obj = JSON.parse(data.Msg);
+                    if (typeof obj == 'object' && obj) {
+                        msg.push(data.Msg);
+                    }
+
+                } catch (e) {
+                }
+
                 break;
             case 5: // BCMESSAGE
 

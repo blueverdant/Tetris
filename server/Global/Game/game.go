@@ -14,16 +14,16 @@ type GameInit struct {
 	Height          int      `json:"height"`
 	Speed           int      `json:"speed"`
 	Num_block       int      `json:"num_block"`
-	type_color      string   `json:"type_color"`
-	ident           int      `json:"ident"`
-	direction       int      `json:"direction"`
-	grade           int      `json:"grade"`
-	over            bool     `json:"over"`
-	arr_bX          []int    `json:"arr_bX"`
-	arr_bY          []int    `json:"arr_bY"`
-	arr_store_X     []int    `json:"arr_store_X"`
-	arr_store_Y     []int    `json:"arr_store_Y"`
-	arr_store_color []string `json:"arr_store_color"`
+	Type_color      string   `json:"type_color"`
+	//Ident           int      `json:"ident"`
+	Direction       int      `json:"direction"`
+	Grade           int      `json:"grade"`
+	Over            bool     `json:"Over"`
+	Arr_bX          []int    `json:"arr_bX"`
+	Arr_bY          []int    `json:"arr_bY"`
+	Arr_store_X     []int    `json:"arr_store_X"`
+	Arr_store_Y     []int    `json:"arr_store_Y"`
+	Arr_store_color []string `json:"arr_store_color"`
 
 }
 var gGame *GameInit
@@ -37,10 +37,12 @@ func initgame(event server.IM_protocol)server.IM_protocol {
 	gGame.Width=10
 	gGame.Height =25
 	gGame.Speed =400
-	gGame.type_color = "000000"
+	gGame.Type_color = "000000"
 	//map black by client
 	initBackground()
 	initBlock()
+
+
 
 	jsons,error := json.Marshal(gGame)
 	if error != nil {
@@ -57,33 +59,34 @@ func Down_speed_up_tick(){
 
 	if (flag_all_down) {
 		//gGame.initBackground()
-		for i := 0; i < len(gGame.arr_bY); i++{
-			gGame.arr_bY[i] = gGame.arr_bY[i] + 1
+		for i := 0; i < len(gGame.Arr_bY); i++{
+			gGame.Arr_bY[i] = gGame.Arr_bY[i] + 1
 		}
 	}else{
-		for i:=0; i < len(gGame.arr_bX); i++ {
-			gGame.arr_store_X = append(gGame.arr_store_X,gGame.arr_bX[i])
-			 gGame.arr_store_Y = append(gGame.arr_store_Y,gGame.arr_bY[i])
-			 gGame.arr_store_color=append(gGame.arr_store_color,gGame.type_color)
+		for i:=0; i < len(gGame.Arr_bX); i++ {
+			gGame.Arr_store_X = append(gGame.Arr_store_X,gGame.Arr_bX[i])
+			 gGame.Arr_store_Y = append(gGame.Arr_store_Y,gGame.Arr_bY[i])
+			 gGame.Arr_store_color =append(gGame.Arr_store_color,gGame.Type_color)
 		}
-		gGame.arr_bX = gGame.arr_bX[0:len(gGame.arr_bX)]
-		gGame.arr_bY = gGame.arr_bY[0:len(gGame.arr_bY)]
+		gGame.Arr_bX = gGame.Arr_bX[0:len(gGame.Arr_bX)]
+		gGame.Arr_bY = gGame.Arr_bY[0:len(gGame.Arr_bY)]
 		initBlock()
 	}
 	 ClearUnderBlock()
-	 //gGame.drawBlock(this.type_color)
+	 //gGame.drawBlock(this.Type_color)
 	 //gGame.drawStaticBlock()
 	 gameover()
 }
 func initBlock(){
 	createRandom("rColor")        //生成颜色字符串，
+	createRandom("rBlock")
 }
 
 func gameover(){
-	for i:=0; i < len(gGame.arr_store_X); i++{
-		if (gGame.arr_store_Y[i] == 0) {
+	for i:=0; i < len(gGame.Arr_store_X); i++{
+		if (gGame.Arr_store_Y[i] == 0) {
 			loop = false
-			gGame.over = true
+			gGame.Over = true
 		}
 	}
 }
@@ -97,8 +100,8 @@ func move(dir_temp int){
 			flag_all_right = JudgeCollision_other(1)
 
 			if flag_all_right {
-				for i := 0; i < len(gGame.arr_bY); i++{
-					gGame.arr_bX[i] = gGame.arr_bX[i]+1
+				for i := 0; i < len(gGame.Arr_bY); i++{
+					gGame.Arr_bX[i] = gGame.Arr_bX[i]+1
 				}
 			}
 		}else{
@@ -106,12 +109,12 @@ func move(dir_temp int){
 			flag_all_left = JudgeCollision_other(-1)
 
 			if flag_all_left {
-				for i:=0; i < len(gGame.arr_bY); i++{
-					gGame.arr_bX[i] = gGame.arr_bX[i]-1
+				for i:=0; i < len(gGame.Arr_bY); i++{
+					gGame.Arr_bX[i] = gGame.Arr_bX[i]-1
 				}
 			}
 		}
-		//drawBlock(gGame.type_color)
+		//drawBlock(gGame.Type_color)
 		//drawStaticBlock()
 	}
 
@@ -123,24 +126,24 @@ func createRandom(stype string){
 		gGame.Num_block =  rand.Intn(5)+1
 		switch(gGame.Num_block){
 			case 1:
-				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp,temp+1)
-				gGame.arr_bY=append(gGame.arr_bY,0,1,1,1)
+				gGame.Arr_bX =append(gGame.Arr_bX,temp,temp-1,temp,temp+1)
+				gGame.Arr_bY =append(gGame.Arr_bY,0,1,1,1)
 				break
 			case 2:
-				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp-1,temp+1)
-				gGame.arr_bY=append(gGame.arr_bY,1,0,1,1)
+				gGame.Arr_bX =append(gGame.Arr_bX,temp,temp-1,temp-1,temp+1)
+				gGame.Arr_bY =append(gGame.Arr_bY,1,0,1,1)
 				break
 			case 3:
-				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp+1,temp+2)
-				gGame.arr_bY=append(gGame.arr_bY,0,0,0,0)
+				gGame.Arr_bX =append(gGame.Arr_bX,temp,temp-1,temp+1,temp+2)
+				gGame.Arr_bY =append(gGame.Arr_bY,0,0,0,0)
 				break
 			case 4:
-				gGame.arr_bX=append(gGame.arr_bX,temp,temp-1,temp,temp+1)
-				gGame.arr_bY=append(gGame.arr_bY,0,0,1,1)
+				gGame.Arr_bX =append(gGame.Arr_bX,temp,temp-1,temp,temp+1)
+				gGame.Arr_bY =append(gGame.Arr_bY,0,0,1,1)
 				break
 			case 5:
-				gGame.arr_bX=append(gGame.arr_bX,temp,temp+1,temp,temp+1)
-				gGame.arr_bY=append(gGame.arr_bY,0,0,1,1)
+				gGame.Arr_bX =append(gGame.Arr_bX,temp,temp+1,temp,temp+1)
+				gGame.Arr_bY =append(gGame.Arr_bY,0,0,1,1)
 				break
 		}
 	}
@@ -149,45 +152,45 @@ func createRandom(stype string){
 
 		switch(num_color){
 			case 1:
-				gGame.type_color="#3EF72A"
+				gGame.Type_color ="#3EF72A"
 				break
 			case 2:
-				gGame.type_color="yellow"
+				gGame.Type_color ="yellow"
 				break
 			case 3:
-				gGame.type_color="#2FE0BF"
+				gGame.Type_color ="#2FE0BF"
 				break
 			case 4:
-				gGame.type_color="red"
+				gGame.Type_color ="red"
 				break
 			case 5:
-				gGame.type_color="gray"
+				gGame.Type_color ="gray"
 				break
 			case 6:
-				gGame.type_color="#C932C6"
+				gGame.Type_color ="#C932C6"
 				break
 			case 7:
-				gGame.type_color= "#FC751B"
+				gGame.Type_color = "#FC751B"
 				break
 			case 8:
-				gGame.type_color= "#6E6EDD"
+				gGame.Type_color = "#6E6EDD"
 				break
 			case 9:
-				gGame.type_color= "#F4E9E1"
+				gGame.Type_color = "#F4E9E1"
 				break
 		}
 	}
 }
 
 func JudgeCollision_down() bool{
-	for  i := 0; i < len(gGame.arr_bX); i++ {
-		if (gGame.arr_bY[i] + 1 == gGame.Height){
+	for  i := 0; i < len(gGame.Arr_bX); i++ {
+		if (gGame.Arr_bY[i] + 1 == gGame.Height){
 			return false
 		}
-		if (len(gGame.arr_store_X) != 0) {
-			for j := 0; j < len(gGame.arr_store_X); j++{
-				if (gGame.arr_bX[i] == gGame.arr_store_X[j]) {
-					if (gGame.arr_bY[i] + 1 == gGame.arr_store_Y[j]) {
+		if (len(gGame.Arr_store_X) != 0) {
+			for j := 0; j < len(gGame.Arr_store_X); j++{
+				if (gGame.Arr_bX[i] == gGame.Arr_store_X[j]) {
+					if (gGame.Arr_bY[i] + 1 == gGame.Arr_store_Y[j]) {
 						return false
 					}
 				}
@@ -201,10 +204,10 @@ func  ClearUnderBlock(){
 //删除低层方块
  	var arr_row []int
  	var line_num int
-	if len(gGame.arr_store_X)!= 0 {
+	if len(gGame.Arr_store_X)!= 0 {
 		for j := gGame.Height -1; j >= 0; j--{
-			for i := 0; i < len(gGame.arr_store_color); i++{
-				if gGame.arr_store_Y[i] == j {
+			for i := 0; i < len(gGame.Arr_store_color); i++{
+				if gGame.Arr_store_Y[i] == j {
 					arr_row = append(arr_row,i )
 				}
 			}
@@ -218,41 +221,41 @@ func  ClearUnderBlock(){
 	}
 	if (len(arr_row) == gGame.Width) {
 		//计算成绩grade
-		gGame.grade++
+		gGame.Grade++
 
 		for i := 0; i < len(arr_row); i++{
-			gGame.arr_store_X = gGame.arr_store_X[arr_row[i]-i:1]
-			gGame.arr_store_Y = gGame.arr_store_Y[arr_row[i]-i: 1]
-			gGame.arr_store_color = gGame.arr_store_color[arr_row[i]-i: 1]
+			gGame.Arr_store_X = gGame.Arr_store_X[arr_row[i]-i:1]
+			gGame.Arr_store_Y = gGame.Arr_store_Y[arr_row[i]-i: 1]
+			gGame.Arr_store_color = gGame.Arr_store_color[arr_row[i]-i: 1]
 		}
 
 		//让上面的方块往下掉一格
-		for i := 0; i < len(gGame.arr_store_color); i++{
-			if (gGame.arr_store_Y[i] < line_num) {
-				gGame.arr_store_Y[i] = gGame.arr_store_Y[i]+1
+		for i := 0; i < len(gGame.Arr_store_color); i++{
+			if (gGame.Arr_store_Y[i] < line_num) {
+				gGame.Arr_store_Y[i] = gGame.Arr_store_Y[i]+1
 			}
 		}
 	}
 }
 
 func JudgeCollision_other( num int) bool{
-	for i := 0; i < len(gGame.arr_bX); i++{
+	for i := 0; i < len(gGame.Arr_bX); i++{
 		if (num == 1) {
-			if gGame.arr_bX[i] == gGame.Width - 1{
+			if gGame.Arr_bX[i] == gGame.Width - 1{
 				return false
 			}
 
 		}
 		if (num == -1) {
-			if gGame.arr_bX[i] == 0 {
+			if gGame.Arr_bX[i] == 0 {
 				return false
 			}
 
 		}
-		if (len(gGame.arr_store_X) != 0) {
-			for j := 0; j < len(gGame.arr_store_X); j++{
-				if (gGame.arr_bY[i] == gGame.arr_store_Y[j]) {
-					if gGame.arr_bX[i] + num == gGame.arr_store_X[j] {
+		if (len(gGame.Arr_store_X) != 0) {
+			for j := 0; j < len(gGame.Arr_store_X); j++{
+				if (gGame.Arr_bY[i] == gGame.Arr_store_Y[j]) {
+					if gGame.Arr_bX[i] + num == gGame.Arr_store_X[j] {
 						return false
 					}
 				}
@@ -262,18 +265,25 @@ func JudgeCollision_other( num int) bool{
 	return true;
 }
 
-func Tick(event server.IM_protocol)server.IM_protocol{
-	if"start" == event.Msg{
-		 return initgame(event)
+func Start(event server.IM_protocol)server.IM_protocol{
+	if false==loop && "start" == event.Msg{
+		return initgame(event)
 	}
+	if true==loop {
+
+	}
+	//这里返回要客户端重新开始游戏
 	return event
 }
 
 func GameRussia()  {
-	loop = true
 	gGame =	&GameInit{}
-	for;true == loop;{
+	for{
 		time.Sleep(40 * time.Millisecond)
-		Down_speed_up_tick()
+		if true == loop {
+			Down_speed_up_tick()
+		}else{
+			return
+		}
 	}
 }

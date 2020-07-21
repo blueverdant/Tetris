@@ -67,9 +67,9 @@
             // 初始化方块的位置和颜色
             initBlock(){
                 this.paints.beginPath()
-                this.createRandom('rColor')        //生成颜色字符串，
+                //this.createRandom('rColor')        //服务器生成颜色字符串，
                 this.paints.fillStyle = this.type_color
-                this.createRandom('rBlock')        //生成方块类型数字
+                //this.createRandom('rBlock')        //服务器生成方块类型数字
                 this.arr_bX.forEach((item, index) => {
                     this.paintfr(item, this.arr_bY[index], 0.9)
                 })
@@ -104,20 +104,38 @@
  
             // 游戏开始
             gameStart(){
-                this.init()
-                this.run()
+                this.ident = setInterval("self.rungame()", this.speed)
             }
  
 
  
             // 方块自动下落
-            run(){
+            rungame(){
                 //this.ident = setInterval("self.down_speed_up()", this.speed)
-                self.down_speed_up()
+                var r = GetMsg()
+                if (""!=r) {
+                    r = JSON.parse(r)
+                    if(r.action == "tick")
+                    {
+                        this.side = r.side
+                        this.width = r.width            // 一行包含的方块数
+                        this.height =  r.height        // 一列包含的方块数
+                        this.speed =  r.speed             // 方块下落移动速度
+                        this.num_blcok =  r.num_blcok               // 当前方块类型的数字变量
+                        this.type_color  =r.type_color              // 当前颜色类型的字符串变量
+                        this.direction = r.direction         // 方块方向,初始化为1，默认状态
+                        this.grade = r.grade                  // 用来计算分数
+                        this.over = r.over           // 游戏是否结束
+                        this.arr_bX = r.arr_bX             // 存放当前方块的X坐标
+                        this.arr_bY = r.arr_bY              // 存放当前方块的Y坐标
+                        this.arr_store_X = r.arr_store_X          // 存放到达底部所有方块的X坐标
+                        this.arr_store_Y = r.arr_store_Y          // 存放到达底部所有方块的Y坐标
+                        this.arr_store_color =r.arr_store_color      // 存放到达底部所有方块的颜色
+                    }
+                    self.down_speed_up()
+                }
+
             }
- 
-
-
             /*
  
             // 生成随机数返回方块类型或颜色类型
@@ -456,10 +474,12 @@
                 }
             }
         }
-        /*
+
         let tetrisObj = new tetris()
+
         tetrisObj.gameStart()
-        */
+
+
         //方向键功能函数
         document.onkeydown = (e) => {   
             if (tetrisObj.over)

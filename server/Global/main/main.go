@@ -2,12 +2,12 @@ package main
 
 import (
 	_ "fmt"
+	"github.com/fv0008/AWS_Russia/server/Global/Game"
 	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/fv0008/AWS_Russia/server/Gamecontrollers"
 	"github.com/fv0008/AWS_Russia/server/Global"
-	"github.com/fv0008/AWS_Russia/server/Global/Game"
 )
 
 type MainController struct {
