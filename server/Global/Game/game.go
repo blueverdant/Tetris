@@ -29,10 +29,15 @@ type GameInit struct {
 var gGame *GameInit
 var loop bool
 
+var MsgList = make(chan string, 100)
+
 func initBackground(){
 
 }
-func initgame(event server.IM_protocol)server.IM_protocol {
+func initgame(event server.IM_protocol) {
+	loop = true;
+	go GameRussia()
+	time.Sleep(40 * time.Millisecond)
 	gGame.Side=35
 	gGame.Width=10
 	gGame.Height =25
@@ -42,8 +47,7 @@ func initgame(event server.IM_protocol)server.IM_protocol {
 	initBackground()
 	initBlock()
 	//开启游戏循环，尝试第一个tick
-	loop = true;
-	Down_speed_up_tick()
+
 	field := make(map[string]interface{}, 0)
 	jsons,error := json.Marshal(gGame)
 	if error != nil {
@@ -52,8 +56,7 @@ func initgame(event server.IM_protocol)server.IM_protocol {
 	json.Unmarshal([]byte(jsons), &field)
 	field["action"] = "start"
 	jsons,error= json.Marshal(field)
-	event.Msg = string(jsons)
-	return event
+	MsgList <- string(jsons)
 }
 
 func Down_speed_up_tick(){
@@ -79,6 +82,15 @@ func Down_speed_up_tick(){
 	 //gGame.drawBlock(this.Type_color)
 	 //gGame.drawStaticBlock()
 	 gameover()
+	field := make(map[string]interface{}, 0)
+	jsons,error := json.Marshal(gGame)
+	if error != nil {
+		fmt.Println(error.Error())
+	}
+	json.Unmarshal([]byte(jsons), &field)
+	field["action"] = "tick"
+	jsons,error= json.Marshal(field)
+	MsgList <- string(jsons)
 }
 func initBlock(){
 	createRandom("rColor")        //生成颜色字符串，
@@ -218,7 +230,7 @@ func  ClearUnderBlock(){
 				line_num = j
 				break
 			}else{
-				arr_row = arr_row[0:len(arr_row)]
+				arr_row = arr_row[0:0]
 			}
 		}
 	}
@@ -227,9 +239,9 @@ func  ClearUnderBlock(){
 		gGame.Grade++
 
 		for i := 0; i < len(arr_row); i++{
-			gGame.Arr_store_X = gGame.Arr_store_X[arr_row[i]-i:1]
-			gGame.Arr_store_Y = gGame.Arr_store_Y[arr_row[i]-i: 1]
-			gGame.Arr_store_color = gGame.Arr_store_color[arr_row[i]-i: 1]
+			gGame.Arr_store_X = append(gGame.Arr_store_X[:arr_row[i]-i], gGame.Arr_store_X[arr_row[i]-i+1:]...)
+			gGame.Arr_store_Y = append(gGame.Arr_store_Y[:arr_row[i]-i], gGame.Arr_store_Y[arr_row[i]-i+1:]...)
+			gGame.Arr_store_color = append(gGame.Arr_store_color[:arr_row[i]-i], gGame.Arr_store_color[arr_row[i]-i+1:]...)
 		}
 
 		//让上面的方块往下掉一格
@@ -270,10 +282,14 @@ func JudgeCollision_other( num int) bool{
 
 func Start(event server.IM_protocol)(server.IM_protocol,bool){
 	if false==loop && "start" == event.Msg{
-		return initgame(event),true
+		initgame(event)
 	}
 	if true==loop {
-
+		select {
+		case i := <- MsgList:
+			event.Msg = i
+			return event,true
+		}
 	}
 	//这里返回要客户端重新开始游戏
 	return event,false
@@ -282,7 +298,7 @@ func Start(event server.IM_protocol)(server.IM_protocol,bool){
 func GameRussia()  {
 	gGame =	&GameInit{}
 	for{
-		time.Sleep(40 * time.Millisecond)
+		time.Sleep(400 * time.Millisecond)
 		if true == loop {
 			Down_speed_up_tick()
 		}else{

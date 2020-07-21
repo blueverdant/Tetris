@@ -202,12 +202,12 @@ func  (this *WebSocketListController)BCGame(event server.IM_protocol){
 }
 func (this *WebSocketListController)NetRussia()  {
 	for{
+		time.Sleep(400 * time.Millisecond)
 		event := server.IM_protocol{}
 		ret,b :=Game.Start(event)
 		if true==b{
 			this.BCGame(ret)
 		}
-
 	}
 }
 func (this *WebSocketListController)Game(event server.IM_protocol)  {

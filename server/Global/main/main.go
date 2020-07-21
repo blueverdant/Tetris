@@ -2,7 +2,6 @@ package main
 
 import (
 	_ "fmt"
-	"github.com/fv0008/AWS_Russia/server/Global/Game"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -32,7 +31,6 @@ func (this *MainController) Single() {
 }
 func main() {
 	Global.Init_Logs()
-	go Game.GameRussia()
 	time.Sleep(2 * time.Second)
 	beego.Router("/", &MainController{},"get:Single")
 	beego.Router("/watch", &MainController{},"get:Watch")

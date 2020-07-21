@@ -138,6 +138,29 @@
                             this.arr_store_color = r.arr_store_color          // 存放到达底部所有方块的颜色
                         }
                     }
+                    if(r.action == "tick")
+                    {
+                        this.side = r.side
+                        this.width = r.width            // 一行包含的方块数
+                        this.height =  r.height        // 一列包含的方块数
+                        this.speed =  r.speed             // 方块下落移动速度
+                        this.num_blcok =  r.num_blcok               // 当前方块类型的数字变量
+                        this.type_color  =r.type_color              // 当前颜色类型的字符串变量
+                        this.direction = r.direction         // 方块方向,初始化为1，默认状态
+                        this.grade = r.grade                  // 用来计算分数
+                        this.over = r.over           // 游戏是否结束
+                        this.arr_bX = r.arr_bX             // 存放当前方块的X坐标
+                        this.arr_bY = r.arr_bY              // 存放当前方块的Y坐标
+                        if (null!= r.arr_store_X){
+                            this.arr_store_X = r.arr_store_X          // 存放到达底部所有方块的X坐标
+                        }
+                        if (null!= r.arr_store_Y){
+                            this.arr_store_Y = r.arr_store_Y          // 存放到达底部所有方块的Y坐标
+                        }
+                        if (null!= r.arr_store_color){
+                            this.arr_store_color = r.arr_store_color          // 存放到达底部所有方块的颜色
+                        }
+                    }
                     self.down_speed_up()
                 }
 
@@ -258,12 +281,13 @@
  
             //方向键为下的加速函数
             down_speed_up(){
+                this.initBackground()
                 /*
                 let flag_all_down = true
                 flag_all_down = this.judgeCollision_down()
                 
                 if (flag_all_down) {
-                    this.initBackground()
+
                     for(let i = 0; i < this.arr_bY.length; i++){
                         this.arr_bY[i] = this.arr_bY[i] + 1
                     }
@@ -500,19 +524,19 @@
                     break
                 case 32:  // 空格换方向
                     tetrisObj.initBackground()        //重画地图
-                    tetrisObj.up_change_direction(tetrisObj.num_blcok)
+                    //tetrisObj.up_change_direction(tetrisObj.num_blcok)
                     tetrisObj.drawBlock(tetrisObj.type_color)
                     postConnect("change")
                     break
                 case 37:  // 方向为左
                     tetrisObj.initBackground()
-                    tetrisObj.move(-1)
+                    //tetrisObj.move(-1)
                     tetrisObj.drawBlock(tetrisObj.type_color)
                     postConnect("right")
                     break
                 case 39:  // 方向为右
                     tetrisObj.initBackground()
-                    tetrisObj.move(1)
+                    //tetrisObj.move(1)
                     tetrisObj.drawBlock(tetrisObj.type_color)
                     postConnect("left")
                     break
