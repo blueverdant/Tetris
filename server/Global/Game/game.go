@@ -39,8 +39,8 @@ func initgame(event server.IM_protocol) {
 	go GameRussia()
 	time.Sleep(40 * time.Millisecond)
 	gGame.Side=35
-	gGame.Width=10
-	gGame.Height =25
+	gGame.Width=15
+	gGame.Height =10
 	gGame.Speed =400
 	gGame.Type_color = "000000"
 	//map black by client
@@ -55,6 +55,7 @@ func initgame(event server.IM_protocol) {
 	}
 	json.Unmarshal([]byte(jsons), &field)
 	field["action"] = "start"
+	field["notify"] = "start"
 	jsons,error= json.Marshal(field)
 	MsgList <- string(jsons)
 }
@@ -74,14 +75,14 @@ func Down_speed_up_tick(){
 			 gGame.Arr_store_Y = append(gGame.Arr_store_Y,gGame.Arr_bY[i])
 			 gGame.Arr_store_color =append(gGame.Arr_store_color,gGame.Type_color)
 		}
-		gGame.Arr_bX = gGame.Arr_bX[0:len(gGame.Arr_bX)]
-		gGame.Arr_bY = gGame.Arr_bY[0:len(gGame.Arr_bY)]
+		gGame.Arr_bX = gGame.Arr_bX[0:0]
+		gGame.Arr_bY = gGame.Arr_bY[0:0]
 		initBlock()
 	}
 	 ClearUnderBlock()
 	 //gGame.drawBlock(this.Type_color)
 	 //gGame.drawStaticBlock()
-	 gameover()
+
 	field := make(map[string]interface{}, 0)
 	jsons,error := json.Marshal(gGame)
 	if error != nil {
@@ -89,8 +90,10 @@ func Down_speed_up_tick(){
 	}
 	json.Unmarshal([]byte(jsons), &field)
 	field["action"] = "tick"
+	field["notify"] = "run"
 	jsons,error= json.Marshal(field)
 	MsgList <- string(jsons)
+	gameover()
 }
 func initBlock(){
 	createRandom("rColor")        //生成颜色字符串，
@@ -101,11 +104,137 @@ func gameover(){
 	for i:=0; i < len(gGame.Arr_store_X); i++{
 		if (gGame.Arr_store_Y[i] == 0) {
 			loop = false
-			gGame.Over = true
+ 			gGame.Over = true
+			field := make(map[string]interface{}, 0)
+			jsons,error := json.Marshal(gGame)
+			if error != nil {
+				fmt.Println(error.Error())
+			}
+			json.Unmarshal([]byte(jsons), &field)
+			field["action"] = "tick"
+			field["notify"] = "end"
+			jsons,error= json.Marshal(field)
+			MsgList <- string(jsons)
 		}
 	}
 }
+func up_change_direction(){
+	if (gGame.Num_block == 5) {
+		return
+	}
 
+	 arr_tempX := []int{}
+	 arr_tempY := []int{}
+	//因为不知道是否能够变形成功，所以先存储起来
+	for i := 0;i < len(gGame.Arr_bX); i++{
+		arr_tempX = append(arr_tempX,gGame.Arr_bX[i])
+		arr_tempY = append(arr_tempY,gGame.Arr_bY[i])
+	}
+	gGame.Direction++
+	//将中心坐标提取出来，变形都以当前中心为准
+	var ax_temp int
+	var ay_temp int
+	ax_temp = gGame.Arr_bX[0]
+	ay_temp = gGame.Arr_bY[0]
+
+	gGame.Arr_bX = gGame.Arr_bX [0:0]           //将数组清空
+	gGame.Arr_bY = gGame.Arr_bY[0:0]
+
+	if (gGame.Num_block == 1) {
+
+		switch(gGame.Direction%4){
+			case 1:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp-1,ax_temp,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp+1,ay_temp+1,ay_temp+1)
+				break
+			case 2:
+				gGame.Arr_bX= append(gGame.Arr_bX,ax_temp,ax_temp-1,ax_temp,ax_temp)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp,ay_temp-1,ay_temp+1)
+				break
+			case 3:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp-1,ax_temp,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp,ay_temp+1,ay_temp)
+				break
+			case 0:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp,ax_temp,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp-1,ay_temp+1,ay_temp)
+				break
+		}
+	}
+	if (gGame.Num_block  == 2) {
+
+		switch(gGame.Direction%4){
+			case 1:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp-1,ax_temp-1,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp,ay_temp-1,ay_temp)
+				break
+			case 2:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp,ax_temp,ax_temp-1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp-1,ay_temp+1,ay_temp+1)
+				break
+			case 3:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp-1,ax_temp+1,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp,ay_temp,ay_temp+1)
+				break
+			case 0:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp,ax_temp,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp-1,ay_temp+1,ay_temp-1)
+				break
+		}
+	}
+	if (gGame.Num_block  == 3) {
+
+		switch(gGame.Direction%4){
+			case 1:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp-1,ax_temp+1,ax_temp+2)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp,ay_temp,ay_temp)
+				break
+			case 2:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp,ax_temp,ax_temp)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp-1,ay_temp+1,ay_temp+2)
+				break
+			case 3:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp-1,ax_temp+1,ax_temp+2)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp,ay_temp,ay_temp)
+				break
+			case 0:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp,ax_temp,ax_temp)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp-1,ay_temp+1,ay_temp+2)
+				break
+		}
+	}
+	if (gGame.Num_block  == 4) {
+
+		switch(gGame.Direction%4){
+			case 1:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp-1,ax_temp,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp,ay_temp+1,ay_temp+1)
+				break
+			case 2:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp,ax_temp+1,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp+1,ay_temp,ay_temp-1)
+				break
+			case 3:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp,ax_temp-1,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp-1,ay_temp,ay_temp-1)
+				break
+			case 0:
+				gGame.Arr_bX = append(gGame.Arr_bX,ax_temp,ax_temp,ax_temp+1,ax_temp+1)
+				gGame.Arr_bY = append(gGame.Arr_bY,ay_temp,ay_temp-1,ay_temp,ay_temp+1)
+				break
+		}
+	}
+
+	if (! ( JudgeCollision_other(-1) && JudgeCollision_down() && JudgeCollision_other(1)  )) {            //如果变形不成功则执行下面代码
+		gGame.Arr_bX = gGame.Arr_bX[0:0]
+		gGame.Arr_bY = gGame.Arr_bY [0:0]
+		for i:=0; i< len(arr_tempX); i++{
+			gGame.Arr_bX=append(gGame.Arr_bX,arr_tempX[i])
+			gGame.Arr_bY=append(gGame.Arr_bY,arr_tempY[i])
+		}
+	}
+	//this.drawStaticBlock()
+}
 //方向键为左右的左移动函数
 func move(dir_temp int){
 		//initBackground()
@@ -284,13 +413,24 @@ func Start(event server.IM_protocol)(server.IM_protocol,bool){
 	if false==loop && "start" == event.Msg{
 		initgame(event)
 	}
-	if true==loop {
+	if string("left") == event.Msg{
+		move(1)
+	}
+	if string("right") == event.Msg{
+		move(-1)
+	}
+	if string("change") == event.Msg{
+		up_change_direction()
+	}
+	if true==loop || len(MsgList)>0 {
 		select {
 		case i := <- MsgList:
 			event.Msg = i
 			return event,true
 		}
 	}
+
+
 	//这里返回要客户端重新开始游戏
 	return event,false
 }

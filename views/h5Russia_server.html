@@ -519,25 +519,25 @@
  
             switch(e.keyCode){
                 case 40:  // 方向为下
-                    tetrisObj.down_speed_up()
+                    //tetrisObj.down_speed_up()
                     postConnect("down")
                     break
                 case 32:  // 空格换方向
-                    tetrisObj.initBackground()        //重画地图
+                    //tetrisObj.initBackground()        //重画地图
                     //tetrisObj.up_change_direction(tetrisObj.num_blcok)
-                    tetrisObj.drawBlock(tetrisObj.type_color)
+                    //tetrisObj.drawBlock(tetrisObj.type_color)
                     postConnect("change")
                     break
                 case 37:  // 方向为左
-                    tetrisObj.initBackground()
+                    //tetrisObj.initBackground()
                     //tetrisObj.move(-1)
-                    tetrisObj.drawBlock(tetrisObj.type_color)
+                    //tetrisObj.drawBlock(tetrisObj.type_color)
                     postConnect("right")
                     break
                 case 39:  // 方向为右
-                    tetrisObj.initBackground()
+                    //tetrisObj.initBackground()
                     //tetrisObj.move(1)
-                    tetrisObj.drawBlock(tetrisObj.type_color)
+                    //tetrisObj.drawBlock(tetrisObj.type_color)
                     postConnect("left")
                     break
             }    

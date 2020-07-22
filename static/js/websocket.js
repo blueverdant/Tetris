@@ -83,7 +83,7 @@ function config(ret)
 
                 break;
             case 4: // MESSAGE
-                var Notify = document.getElementById('notify');
+                var Notify = document.getElementById('action');
 
                 Notify.innerText = data.Msg;
                 try {
@@ -97,16 +97,21 @@ function config(ret)
 
                 break;
             case 5: // BCMESSAGE
-
                 var action = document.getElementById('action');
+                var Notify = document.getElementById('notify');
 
-                    action.innerText = data.Msg;
+                var notify = JSON.parse(data.Msg);
+                Notify.innerText = notify.notify;
+                console.log(notify.notify)
+                action.innerText = data.Msg;
+                try {
+                    var obj = JSON.parse(data.Msg);
+                    if (typeof obj == 'object' && obj) {
+                        msg.push(data.Msg);
+                    }
 
-
-
-                //li.appendChild(username);
-                //li.appendChild(document.createTextNode(': '));
-                //li.appendChild(content);
+                } catch (e) {
+                }
 
                 break;
             case 6: // HEART

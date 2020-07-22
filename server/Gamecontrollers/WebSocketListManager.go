@@ -204,6 +204,7 @@ func (this *WebSocketListController)NetRussia()  {
 	for{
 		time.Sleep(400 * time.Millisecond)
 		event := server.IM_protocol{}
+		event.Type = server.IM_EVENT_BROADCAST_MESSAGE
 		ret,b :=Game.Start(event)
 		if true==b{
 			this.BCGame(ret)
