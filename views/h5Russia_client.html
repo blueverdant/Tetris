@@ -12,12 +12,12 @@
     </style>
 </head>
 <body>
-<h3>"username": <span id="uname">{{.UserName}}</span></h3>
-<h3>"action": <span id="action"></span></h3>
-<h3>"Notify": <span id="notify"></span></h3>
-    <canvas width="700" height="950" id="tetris"></canvas>
-    <div id="text" style='color: red;font-size: 30px;'>当前分数：0</div>
-    <script type="text/javascript">
+    <h3>"username": <span id="uname">{{.UserName}}</span></h3>
+    <h3>"action": <span id="action"></span></h3>
+    <h3>"Notify": <span id="notify"></span></h3>
+        <canvas width="400" height="600" id="tetris"></canvas>
+        <div id="text" style='color: red;font-size: 30px;'>当前分数：<span id="text">0</span></div>
+        <script type="text/javascript">
         /**
          * [一个完整的俄罗斯方块类 design by magic_xiang]
          * @param  {number} side     [每个方块边长(px),默认35]
@@ -52,24 +52,7 @@
                 this.paints.fillRect(x*this.side, y*this.side, scale*this.side, scale*this.side)
             }
  
-            // 游戏开始
-            gameStart(){
-                this.init()
-                this.run()
-            }
- 
-            // 初始化工作
-            init(){
-                this.initBackground()
-                this.initBlock()
-            }
- 
-            // 方块自动下落
-            run(){
-                this.ident = setInterval("self.down_speed_up()", this.speed)
-            }
- 
-            // 初始化地图
+               // 初始化地图
             initBackground(){
                 this.paints.beginPath()
                 this.paints.fillStyle='#000000'        //地图填充颜色为黑色
@@ -80,19 +63,20 @@
                 }
                 this.paints.closePath()
             }
- 
+
             // 初始化方块的位置和颜色
             initBlock(){
                 this.paints.beginPath()
-                this.createRandom('rColor')        //生成颜色字符串，
+                //this.createRandom('rColor')        //服务器生成颜色字符串，
                 this.paints.fillStyle = this.type_color
-                this.createRandom('rBlock')        //生成方块类型数字
+                //this.createRandom('rBlock')        //服务器生成方块类型数字
                 this.arr_bX.forEach((item, index) => {
                     this.paintfr(item, this.arr_bY[index], 0.9)
                 })
                 this.paints.closePath()
             }
- 
+             
+           
             // 利用数组画方块
             drawBlock(color){
                 this.paints.beginPath()
@@ -112,124 +96,84 @@
                     this.paints.closePath()
                 })
             }
- 
-            // 生成随机数返回方块类型或颜色类型
-            createRandom(type){
-                let temp = this.width/2-1
- 
-                if (type == 'rBlock'){         //如果是方块类型
-                    this.num_blcok = Math.round(Math.random()*4+1)
-                    switch(this.num_blcok){
-                        case 1:
-                            this.arr_bX.push(temp,temp-1,temp,temp+1)
-                            this.arr_bY.push(0,1,1,1)
-                            break
-                        case 2:
-                            this.arr_bX.push(temp,temp-1,temp-1,temp+1)
-                            this.arr_bY.push(1,0,1,1)
-                            break
-                        case 3:
-                            this.arr_bX.push(temp,temp-1,temp+1,temp+2)
-                            this.arr_bY.push(0,0,0,0)
-                            break
-                        case 4:
-                            this.arr_bX.push(temp,temp-1,temp,temp+1)
-                            this.arr_bY.push(0,0,1,1)
-                            break
-                        case 5:
-                            this.arr_bX.push(temp,temp+1,temp,temp+1)
-                            this.arr_bY.push(0,0,1,1)
-                            break
-                    }
-                }
-                if (type == 'rColor'){                         //如果是颜色类型
-                    let num_color = Math.round(Math.random()*8+1) 
- 
-                    switch(num_color){
-                        case 1:
-                            this.type_color='#3EF72A'
-                            break
-                        case 2:
-                            this.type_color='yellow'
-                            break
-                        case 3:
-                            this.type_color='#2FE0BF'
-                            break
-                        case 4:
-                            this.type_color='red'
-                            break
-                        case 5:
-                            this.type_color='gray'
-                            break
-                        case 6:
-                            this.type_color='#C932C6'
-                            break
-                        case 7:
-                            this.type_color= '#FC751B'
-                            break
-                        case 8:
-                            this.type_color= '#6E6EDD'
-                            break
-                        case 9:
-                            this.type_color= '#F4E9E1'
-                            break
-                    }
-                }
+            // 初始化工作
+            init(){
+                this.initBackground()
+                this.initBlock()
             }
  
-            // 判断方块之间是否碰撞(下)，以及变形时是否越过下边界
-            judgeCollision_down(){
-                for(let i = 0; i < this.arr_bX.length; i++){
-                    if (this.arr_bY[i] + 1 == this.height){ //变形时是否越过下边界
-                        return false
-                    } 
-                    if (this.arr_store_X.length != 0) {    //判断方块之间是否碰撞(下)
-                        for(let j = 0; j < this.arr_store_X.length; j++){
-                            if (this.arr_bX[i] == this.arr_store_X[j]) {
-                                if (this.arr_bY[i] + 1 == this.arr_store_Y[j]) {
-                                    return false
-                                }
-                            }
-                            
+            // 游戏开始
+            gameStart(){
+                this.ident = setInterval("self.rungame()", this.speed)
+            }
+ 
+            
+            // 方块自动下落
+            rungame(){
+                //this.ident = setInterval("self.down_speed_up()", this.speed)
+                var r = GetMsg()
+                if (""!=r) {
+                    r = JSON.parse(r)
+                    if(r.action == "start")
+                    {
+                        this.side = r.side
+                        this.width = r.width            // 一行包含的方块数
+                        this.height =  r.height        // 一列包含的方块数
+                        this.speed =  r.speed             // 方块下落移动速度
+                        this.num_blcok =  r.num_blcok               // 当前方块类型的数字变量
+                        this.type_color  =r.type_color              // 当前颜色类型的字符串变量
+                        this.direction = r.direction         // 方块方向,初始化为1，默认状态
+                        this.grade = r.grade                  // 用来计算分数
+                        this.over = r.over           // 游戏是否结束
+                        this.arr_bX = r.arr_bX             // 存放当前方块的X坐标
+                        this.arr_bY = r.arr_bY              // 存放当前方块的Y坐标
+                        if (null!= r.arr_store_X){
+                            this.arr_store_X = r.arr_store_X          // 存放到达底部所有方块的X坐标
                         }
-                    }    
-                }
-                return true
-            }
- 
-            //判断方块之间是否碰撞(左右)，以及变形时是否越过左右边界
-            judgeCollision_other(num){
-                for(let i = 0; i < this.arr_bX.length; i++){
-                    if (num == 1) {            //变形时是否越过右边界
-                        if (this.arr_bX[i] == this.width - 1) 
-                            return false
-                    }
-                    if (num == -1) {                //变形时是否越过左边界
-                        if (this.arr_bX[i] == 0)
-                            return false
-                    }
-                    if (this.arr_store_X.length != 0) {                    //判断方块之间是否碰撞(左右)
-                        for(let j = 0; j < this.arr_store_X.length; j++){
-                            if (this.arr_bY[i] == this.arr_store_Y[j]) {
-                                if (this.arr_bX[i] + num == this.arr_store_X[j]) {
-                                    return false
-                                }
-                            }
+                        if (null!= r.arr_store_Y){
+                            this.arr_store_Y = r.arr_store_Y          // 存放到达底部所有方块的Y坐标
+                        }
+                        if (null!= r.arr_store_color){
+                            this.arr_store_color = r.arr_store_color          // 存放到达底部所有方块的颜色
                         }
                     }
+                    if(r.action == "tick")
+                    {
+                        this.side = r.side
+                        this.width = r.width            // 一行包含的方块数
+                        this.height =  r.height        // 一列包含的方块数
+                        this.speed =  r.speed             // 方块下落移动速度
+                        this.num_blcok =  r.num_blcok               // 当前方块类型的数字变量
+                        this.type_color  =r.type_color              // 当前颜色类型的字符串变量
+                        this.direction = r.direction         // 方块方向,初始化为1，默认状态
+                        this.grade = r.grade                  // 用来计算分数
+                        this.over = r.over           // 游戏是否结束
+                        this.arr_bX = r.arr_bX             // 存放当前方块的X坐标
+                        this.arr_bY = r.arr_bY              // 存放当前方块的Y坐标
+                        if (null!= r.arr_store_X){
+                            this.arr_store_X = r.arr_store_X          // 存放到达底部所有方块的X坐标
+                        }
+                        if (null!= r.arr_store_Y){
+                            this.arr_store_Y = r.arr_store_Y          // 存放到达底部所有方块的Y坐标
+                        }
+                        if (null!= r.arr_store_color){
+                            this.arr_store_color = r.arr_store_color          // 存放到达底部所有方块的颜色
+                        }
+                    }
+                    self.down_speed_up()
                 }
-                return true;
+
             }
- 
  
             //方向键为下的加速函数
             down_speed_up(){
-                return
+                this.initBackground()
+                /*
                 let flag_all_down = true
                 flag_all_down = this.judgeCollision_down()
                 
                 if (flag_all_down) {
-                    this.initBackground()
+
                     for(let i = 0; i < this.arr_bY.length; i++){
                         this.arr_bY[i] = this.arr_bY[i] + 1
                     }
@@ -245,6 +189,7 @@
                     this.arr_bY.splice(0,this.arr_bY.length)
                     this.initBlock()
                 }
+                */
                 this.clearUnderBlock()
                 this.drawBlock(this.type_color)
                 this.drawStaticBlock()
@@ -450,8 +395,11 @@
  
         let tetrisObj = new tetris()
         tetrisObj.gameStart()
+
+
         
         //方向键功能函数
+        /*
         document.onkeydown = (e) => {   
             if (tetrisObj.over)
                 return
@@ -481,6 +429,7 @@
                     break
             }    
         }
+        */
  
     </script>
 </body>

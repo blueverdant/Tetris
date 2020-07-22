@@ -30,17 +30,18 @@ var gGame *GameInit
 var loop bool
 
 var MsgList = make(chan string, 100)
+var qMsgList = make(chan string, 100)
 
 func initBackground(){
 
 }
-func initgame(event server.IM_protocol) {
+ func initgame(event server.IM_protocol) {
 	loop = true;
 	go GameRussia()
 	time.Sleep(40 * time.Millisecond)
 	gGame.Side=35
-	gGame.Width=15
-	gGame.Height =10
+	gGame.Width=10
+	gGame.Height =15
 	gGame.Speed =400
 	gGame.Type_color = "000000"
 	//map black by client
@@ -83,6 +84,10 @@ func Down_speed_up_tick(){
 	 //gGame.drawBlock(this.Type_color)
 	 //gGame.drawStaticBlock()
 
+	MsgReturn()
+	gameover()
+}
+func MsgReturn(){
 	field := make(map[string]interface{}, 0)
 	jsons,error := json.Marshal(gGame)
 	if error != nil {
@@ -92,8 +97,7 @@ func Down_speed_up_tick(){
 	field["action"] = "tick"
 	field["notify"] = "run"
 	jsons,error= json.Marshal(field)
-	MsgList <- string(jsons)
-	gameover()
+	qMsgList <- string(jsons)
 }
 func initBlock(){
 	createRandom("rColor")        //生成颜色字符串，
@@ -233,6 +237,7 @@ func up_change_direction(){
 			gGame.Arr_bY=append(gGame.Arr_bY,arr_tempY[i])
 		}
 	}
+	MsgReturn()
 	//this.drawStaticBlock()
 }
 //方向键为左右的左移动函数
@@ -260,6 +265,7 @@ func move(dir_temp int){
 		}
 		//drawBlock(gGame.Type_color)
 		//drawStaticBlock()
+	MsgReturn()
 	}
 
 
@@ -424,6 +430,10 @@ func Start(event server.IM_protocol)(server.IM_protocol,bool){
 	}
 	if true==loop || len(MsgList)>0 {
 		select {
+		case i := <- qMsgList:
+			event.Msg = i
+			return event,true
+			break
 		case i := <- MsgList:
 			event.Msg = i
 			return event,true
@@ -438,7 +448,7 @@ func Start(event server.IM_protocol)(server.IM_protocol,bool){
 func GameRussia()  {
 	gGame =	&GameInit{}
 	for{
-		time.Sleep(400 * time.Millisecond)
+		time.Sleep(1000 * time.Millisecond)
 		if true == loop {
 			Down_speed_up_tick()
 		}else{

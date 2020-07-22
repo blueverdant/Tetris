@@ -15,8 +15,8 @@
 <h3>"username": <span id="uname">{{.UserName}}</span></h3>
 <h3>"action": <span id="action"></span></h3>
 <h3>"Notify": <span id="notify"></span></h3>
-    <canvas width="700" height="950" id="tetris"></canvas>
-    <div id="text" style='color: red;font-size: 30px;'>当前分数：0</div>
+    <canvas width="400" height="600" id="tetris"></canvas>
+    <div id="text" style='color: red;font-size: 30px;'>当前分数：<span id="text">0</span></div>
     <script type="text/javascript">
         /**
          * [一个完整的俄罗斯方块类 design by magic_xiang]
@@ -510,7 +510,7 @@
         let tetrisObj = new tetris()
 
         tetrisObj.gameStart()
-
+        setTimeout(  (function(){postConnect("start")}),1000*3)
 
         //方向键功能函数
         document.onkeydown = (e) => {   

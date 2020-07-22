@@ -68,7 +68,7 @@ function config(ret)
 
                 username.innerText = data.SocketId;
                 console.log("Join updateSocketId:",data);
-                postConnect("start")
+                //postConnect("start")
                 break
             case 1: // BCJOIN
                 //li.innerText = data.SocketId + ' joined the chat room.';
@@ -85,7 +85,7 @@ function config(ret)
             case 4: // MESSAGE
                 var Notify = document.getElementById('action');
 
-                Notify.innerText = data.Msg;
+                //Notify.innerText = data.Msg;
                 try {
                     var obj = JSON.parse(data.Msg);
                     if (typeof obj == 'object' && obj) {
@@ -99,11 +99,13 @@ function config(ret)
             case 5: // BCMESSAGE
                 var action = document.getElementById('action');
                 var Notify = document.getElementById('notify');
+                var t = document.getElementById('text');
 
                 var notify = JSON.parse(data.Msg);
                 Notify.innerText = notify.notify;
+                t.innerText = notify.grade
                 console.log(notify.notify)
-                action.innerText = data.Msg;
+                action.innerText = notify.action;
                 try {
                     var obj = JSON.parse(data.Msg);
                     if (typeof obj == 'object' && obj) {
