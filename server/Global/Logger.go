@@ -15,11 +15,12 @@ const char* build_time(void)
    	sprintf(str, "%s%s", __DATE__,__TIME__);
 	return str;
 }
-*/
 import "C"
+*/
+
 var Logger *logs.BeeLogger;
 var (
-	buildTime = C.GoString(C.build_time())
+	buildTime = ""
 	version = ""
 )
 
