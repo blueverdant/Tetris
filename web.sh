@@ -1,6 +1,5 @@
 #!/bin/sh
 export PATH=$PATH:/usr/local/go/bin
-git pull
 cd server/Global/main/
 go build -o Russiamain main.go 
 cd ..
