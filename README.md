@@ -1,4 +1,4 @@
-# AWS_Russia
+# Tetris
 这是一个给AWS的ELB功能设置的游戏例子</br>
 是从网络上一个单机的H5 俄罗斯修改过来的，用来证明AWS的ELB可以支持TCP和Websocket功能 </br>
 </br>
