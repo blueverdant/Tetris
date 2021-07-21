@@ -1,12 +1,11 @@
-package main
+package Tetris
 
 import (
 	_ "fmt"
 	"time"
-
-	"github.com/Jugendreisen/Tetris/server/Gamecontrollers"
-	"github.com/Jugendreisen/Tetris/server/Global"
 	"github.com/astaxie/beego"
+	"tetris/server/Gamecontrollers"
+	"tetris/server/Global"
 )
 
 type MainController struct {
@@ -32,16 +31,16 @@ func (this *MainController) Single() {
 func main() {
 	Global.Init_Logs()
 	time.Sleep(2 * time.Second)
-	beego.Router("/", &MainController{},"get:Single")
-	beego.Router("/watch", &MainController{},"get:Watch")
-	beego.Router("/game", &MainController{},"get:Game")
-	beego.Router("/IM/", &Gamecontrollers.AppController{})
-	beego.Router("/IM/join", &Gamecontrollers.AppController{}, "post:Join")
+	beego.Router("/tetris/", &MainController{},"get:Single")
+	beego.Router("/tetris/watch", &MainController{},"get:Watch")
+	beego.Router("/tetris/game", &MainController{},"get:Game")
+	beego.Router("/tetris/IM/", &Gamecontrollers.AppController{})
+	beego.Router("/tetris/IM/join", &Gamecontrollers.AppController{}, "post:Join")
 
 	// WebSocket.
-	beego.Router("/IM/ws", &Gamecontrollers.WebSocketController{})
-	beego.Router("/IM/ws/socket", &Gamecontrollers.WebSocketController{}, "get:Socket")
-
+	beego.Router("/tetris/IM/ws", &Gamecontrollers.WebSocketController{})
+	beego.Router("/tetris/IM/ws/socket", &Gamecontrollers.WebSocketController{}, "get:Socket")
+	StaticDir["/tetris/static"] = "static"
 	beego.Run()
 
 }

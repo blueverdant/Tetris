@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/Jugendreisen/Tetris/server"
 )
 type GameInit struct {
 	Side            int      `json:"side"`

@@ -17,3 +17,4 @@
 # vendor/
 Russiamain
 *.DS_Store
+logs*

@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Jugendreisen/Tetris/server/Global"
+	"tetris/server/Global"
 )
 
 const UserInfoDir = "/UserInfo/"
