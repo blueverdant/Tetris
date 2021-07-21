@@ -37,7 +37,7 @@ func Init_Logs() {
 	version = timestring+"-"+buildTime
 	Logger = logs.NewLogger()
 	Logger.SetLogger(logs.AdapterConsole)
-	Logger.SetLogger(logs.AdapterFile,`{"filename":"logs/`+timestring+buildTime+`lunarhook.log","level":7,"maxlines":0,"maxsize":0,"daily":true,"maxdays":10,"color":true}`)
+	Logger.SetLogger(logs.AdapterFile,`{"filename":"logs/`+timestring+buildTime+`Tetris.log","level":7,"maxlines":0,"maxsize":0,"daily":true,"maxdays":10,"color":true}`)
 	Logger.Debug("this is a debug message")
 	Logger.EnableFuncCallDepth(true)
 	Logger.Trace("version:",timestring+"-"+buildTime)
