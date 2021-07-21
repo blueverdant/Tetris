@@ -113,7 +113,7 @@ func (this *WebSocketListController)SocketJoin(SocketId uint32,ws *websocket.Con
 
 }
 
-func (this *WebSocketListController)NewMsg(ep gameserver.gameserver, user gameserver.IM_protocol_user,SocketId uint32, msg string) gameserver.IM_protocol {
+func (this *WebSocketListController)NewMsg(ep gameserver.EventType, user gameserver.IM_protocol_user,SocketId uint32, msg string) gameserver.IM_protocol {
 	return gameserver.IM_protocol{ep, msg,SocketId,user, int(time.Now().Unix()) }
 }
 
