@@ -6,9 +6,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/Jugendreisen/Tetris/server"
-	"github.com/Jugendreisen/Tetris/server/Global"
-	"github.com/Jugendreisen/Tetris/server/Global/Game"
+	"github.com/Jugendreisen/Tetris/src/server"
+	Global2 "github.com/Jugendreisen/Tetris/src/server/Global"
+	Game2 "github.com/Jugendreisen/Tetris/src/server/Global/Game"
 	"github.com/astaxie/beego"
 
 	"github.com/gorilla/websocket"
@@ -17,9 +17,9 @@ import (
 var globaWebSocketListManager *WebSocketListController
 //带用户信息的websocket
 type SocketInfo struct {
-	SocketId	uint32
-	User     	gameserver.IM_protocol_user
-	Conn     	*websocket.Conn
+	SocketId uint32
+	User     gameserver.IM_protocol_user
+	Conn     *websocket.Conn
 }
 type SocketId struct {
 	SocketId	 uint32
@@ -67,7 +67,7 @@ func init(){
 
 func (this *WebSocketListController)SocketLeave(SocketId uint32) {
 	this.UnSocketChan <- UnSocketId{SocketId}
-	Global.Logger.Info("Socket Leave:", SocketId)
+	Global2.Logger.Info("Socket Leave:", SocketId)
 }
 
 func (this *WebSocketListController)SocketJoin(SocketId uint32,ws *websocket.Conn) {
@@ -106,14 +106,14 @@ func (this *WebSocketListController)SocketJoin(SocketId uint32,ws *websocket.Con
 			//G.Logger.Info(info)
 
 		} else {
-			Global.Logger.Error("Join", err)
+			Global2.Logger.Error("Join", err)
 		}
 
 	}
 
 }
 
-func (this *WebSocketListController)NewMsg(ep gameserver.EventType, user gameserver.IM_protocol_user,SocketId uint32, msg string) gameserver.IM_protocol {
+func (this *WebSocketListController)NewMsg(ep gameserver.gameserver, user gameserver.IM_protocol_user,SocketId uint32, msg string) gameserver.IM_protocol {
 	return gameserver.IM_protocol{ep, msg,SocketId,user, int(time.Now().Unix()) }
 }
 
@@ -127,9 +127,9 @@ func (this *WebSocketListController)chatroom() {
 				this.MsgList <- this.NewMsg(gameserver.IM_EVENT_JOIN, JoinSocket.User,JoinSocket.SocketId,"")
 				this.MsgList <- this.NewMsg(gameserver.IM_EVENT_BROADCAST_JOIN, JoinSocket.User,JoinSocket.SocketId,"")
 				this.MsgList <- this.NewMsg(gameserver.IM_EVENT_MESSAGE, JoinSocket.User,JoinSocket.SocketId,"welcome")
-				Global.Logger.Info("New socket:", JoinSocket.SocketId, ";WebSocket:", JoinSocket.Conn != nil)
+				Global2.Logger.Info("New socket:", JoinSocket.SocketId, ";WebSocket:", JoinSocket.Conn != nil)
 			} else {
-				Global.Logger.Info("Old socket:", JoinSocket.SocketId, ";WebSocket:", JoinSocket.Conn != nil)
+				Global2.Logger.Info("Old socket:", JoinSocket.SocketId, ";WebSocket:", JoinSocket.Conn != nil)
 			}
 		case SocketMessage := <-this.MsgList:
 			//如果是心跳，单发
@@ -152,7 +152,7 @@ func (this *WebSocketListController)chatroom() {
 			}
 			gameserver.NewArchive(SocketMessage)
 			if SocketMessage.Type == gameserver.IM_EVENT_MESSAGE {
-				Global.Logger.Info("Message from", SocketMessage.Users.From, ";Msg:", SocketMessage.Msg)}
+				Global2.Logger.Info("Message from", SocketMessage.Users.From, ";Msg:", SocketMessage.Msg)}
 
 		case LeaveSocket := <-this.UnSocketChan:
 			for sub := this.ActiveSocketList.Front(); sub != nil; sub = sub.Next() {
@@ -162,7 +162,7 @@ func (this *WebSocketListController)chatroom() {
 					ws := sub.Value.(SocketInfo).Conn
 					if ws != nil {
 						ws.Close()
-						Global.Logger.Error("WebSocket closed:", LeaveSocket)
+						Global2.Logger.Error("WebSocket closed:", LeaveSocket)
 					}
 
 					this.MsgList  <- this.NewMsg(gameserver.IM_EVENT_LEAVE, sub.Value.(SocketInfo).User,LeaveSocket.SocketId, "") // Publish a LEAVE event.
@@ -178,7 +178,7 @@ func (this *WebSocketListController)chatroom() {
 func (this *WebSocketListController)broadcastWebSocket(event gameserver.IM_protocol) {
 	data, err := json.Marshal(event)
 	if err != nil {
-		Global.Logger.Error("Fail to marshal event:", err)
+		Global2.Logger.Error("Fail to marshal event:", err)
 		return
 	}
 
@@ -189,7 +189,7 @@ func (this *WebSocketListController)broadcastWebSocket(event gameserver.IM_proto
 
 			if ws.WriteMessage(websocket.TextMessage, data) != nil {
 				// User disconnected.
-				Global.Logger.Trace("disconnected user:",sub.Value.(SocketInfo).User)
+				Global2.Logger.Trace("disconnected user:",sub.Value.(SocketInfo).User)
 				this.UnSocketChan <- UnSocketId{sub.Value.(SocketInfo).SocketId}
 
 			}
@@ -205,7 +205,7 @@ func (this *WebSocketListController)NetRussia()  {
 		time.Sleep(400 * time.Millisecond)
 		event := gameserver.IM_protocol{}
 		event.Type = gameserver.IM_EVENT_BROADCAST_MESSAGE
-		ret,b :=Game.Start(event)
+		ret,b := Game2.Start(event)
 		if true==b{
 			this.BCGame(ret)
 		}
@@ -215,7 +215,7 @@ func (this *WebSocketListController)Game(event gameserver.IM_protocol)  {
 	if ""==event.Msg {
 		return
 	}
-	ret ,t:=Game.Start(event)
+	ret ,t:= Game2.Start(event)
 	if true==t {
 		this.BCGame(ret)
 	}
@@ -224,7 +224,7 @@ func (this *WebSocketListController)Game(event gameserver.IM_protocol)  {
 func (this *WebSocketListController)HeartWebSocket(event gameserver.IM_protocol) {
 	data, err := json.Marshal(event)
 	if err != nil {
-		Global.Logger.Error("Fail to marshal event:", err)
+		Global2.Logger.Error("Fail to marshal event:", err)
 		return
 	}
 
@@ -237,7 +237,7 @@ func (this *WebSocketListController)HeartWebSocket(event gameserver.IM_protocol)
 					// socket disconnected.
 					this.UnSocketChan <- UnSocketId{sub.Value.(SocketInfo).SocketId}
 				} else {
-					Global.Logger.Trace("Socketheart :",event.SocketId)
+					Global2.Logger.Trace("Socketheart :",event.SocketId)
 				}
 			}
 		}

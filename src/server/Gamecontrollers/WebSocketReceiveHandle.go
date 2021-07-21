@@ -1,9 +1,10 @@
 package Gamecontrollers
 
 import (
-	"github.com/Jugendreisen/Tetris/server/Global"
-	"github.com/gorilla/websocket"
 	"net/http"
+
+	Global2 "github.com/Jugendreisen/Tetris/src/server/Global"
+	"github.com/gorilla/websocket"
 )
 
 // WebSocketController handles WebSocket requests.
@@ -42,7 +43,7 @@ func (this *WebSocketController) Socket() {
 		http.Error(this.Ctx.ResponseWriter, "Not a websocket handshake", 400)
 		return
 	} else if err != nil {
-		Global.Logger.Error("Cannot setup deivce WebSocket connection:", err)
+		Global2.Logger.Error("Cannot setup deivce WebSocket connection:", err)
 		return
 	}
 	// Join chat room. 后续所有的通信都不会在走这里而是走到join函数里循环

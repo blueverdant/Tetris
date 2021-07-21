@@ -177,7 +177,7 @@ func Getdatapath() string  {
 	if true== ret {
 		datapath = "datas" + UserInfoDir;
 	}
-	Global.Logger.Info("url: ",getCurrentDirectory())
+	Global.Logger.Info("url: ", getCurrentDirectory())
 	return datapath;
 }
 

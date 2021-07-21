@@ -34,7 +34,7 @@ func Init_Logs() {
 	t := time.Now()
 	timestamp := t.UTC().Unix()
 	timestring := strconv.FormatInt(timestamp,10)
-	version = timestring+"-"+buildTime
+	version = timestring+"-"+ buildTime
 	Logger = logs.NewLogger()
 	Logger.SetLogger(logs.AdapterConsole)
 	Logger.SetLogger(logs.AdapterFile,`{"filename":"logs/`+timestring+buildTime+`Tetris.log","level":7,"maxlines":0,"maxsize":0,"daily":true,"maxdays":10,"color":true}`)

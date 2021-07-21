@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	gameserver "github.com/Jugendreisen/Tetris/server"
+	gameserver2 "github.com/Jugendreisen/Tetris/src/server"
 )
 type GameInit struct {
 	Side            int      `json:"side"`
@@ -35,7 +35,7 @@ var qMsgList = make(chan string, 100)
 func initBackground(){
 
 }
- func initgame(event gameserver.IM_protocol) {
+ func initgame(event gameserver2.IM_protocol) {
 	loop = true;
 	go GameRussia()
 	time.Sleep(40 * time.Millisecond)
@@ -72,9 +72,9 @@ func Down_speed_up_tick(){
 		}
 	}else{
 		for i:=0; i < len(gGame.Arr_bX); i++ {
-			gGame.Arr_store_X = append(gGame.Arr_store_X,gGame.Arr_bX[i])
-			 gGame.Arr_store_Y = append(gGame.Arr_store_Y,gGame.Arr_bY[i])
-			 gGame.Arr_store_color =append(gGame.Arr_store_color,gGame.Type_color)
+			gGame.Arr_store_X = append(gGame.Arr_store_X, gGame.Arr_bX[i])
+			 gGame.Arr_store_Y = append(gGame.Arr_store_Y, gGame.Arr_bY[i])
+			 gGame.Arr_store_color =append(gGame.Arr_store_color, gGame.Type_color)
 		}
 		gGame.Arr_bX = gGame.Arr_bX[0:0]
 		gGame.Arr_bY = gGame.Arr_bY[0:0]
@@ -100,7 +100,7 @@ func MsgReturn(){
 	qMsgList <- string(jsons)
 }
 func initBlock(){
-	createRandom("rColor")        //生成颜色字符串，
+	createRandom("rColor") //生成颜色字符串，
 	createRandom("rBlock")
 }
 
@@ -131,8 +131,8 @@ func up_change_direction(){
 	 arr_tempY := []int{}
 	//因为不知道是否能够变形成功，所以先存储起来
 	for i := 0;i < len(gGame.Arr_bX); i++{
-		arr_tempX = append(arr_tempX,gGame.Arr_bX[i])
-		arr_tempY = append(arr_tempY,gGame.Arr_bY[i])
+		arr_tempX = append(arr_tempX, gGame.Arr_bX[i])
+		arr_tempY = append(arr_tempY, gGame.Arr_bY[i])
 	}
 	gGame.Direction++
 	//将中心坐标提取出来，变形都以当前中心为准
@@ -141,7 +141,7 @@ func up_change_direction(){
 	ax_temp = gGame.Arr_bX[0]
 	ay_temp = gGame.Arr_bY[0]
 
-	gGame.Arr_bX = gGame.Arr_bX [0:0]           //将数组清空
+	gGame.Arr_bX = gGame.Arr_bX [0:0] //将数组清空
 	gGame.Arr_bY = gGame.Arr_bY[0:0]
 
 	if (gGame.Num_block == 1) {
@@ -229,7 +229,7 @@ func up_change_direction(){
 		}
 	}
 
-	if (! ( JudgeCollision_other(-1) && JudgeCollision_down() && JudgeCollision_other(1)  )) {            //如果变形不成功则执行下面代码
+	if (! ( JudgeCollision_other(-1) && JudgeCollision_down() && JudgeCollision_other(1)  )) { //如果变形不成功则执行下面代码
 		gGame.Arr_bX = gGame.Arr_bX[0:0]
 		gGame.Arr_bY = gGame.Arr_bY [0:0]
 		for i:=0; i< len(arr_tempX); i++{
@@ -415,8 +415,8 @@ func JudgeCollision_other( num int) bool{
 	return true;
 }
 
-func Start(event gameserver.IM_protocol)(gameserver.IM_protocol,bool){
-	if false==loop && "start" == event.Msg{
+func Start(event gameserver2.IM_protocol)(gameserver2.IM_protocol,bool){
+	if false== loop && "start" == event.Msg{
 		initgame(event)
 	}
 	if string("left") == event.Msg{
@@ -428,13 +428,13 @@ func Start(event gameserver.IM_protocol)(gameserver.IM_protocol,bool){
 	if string("change") == event.Msg{
 		up_change_direction()
 	}
-	if true==loop || len(MsgList)>0 {
+	if true== loop || len(MsgList)>0 {
 		select {
-		case i := <- qMsgList:
+		case i := <-qMsgList:
 			event.Msg = i
 			return event,true
 			break
-		case i := <- MsgList:
+		case i := <-MsgList:
 			event.Msg = i
 			return event,true
 		}
