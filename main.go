@@ -4,8 +4,9 @@ import (
 	_ "fmt"
 	"time"
 
-	"tetris/server/Gamecontrollers"
-	"tetris/server/Global"
+	"github.com/Jugendreisen/Tetris/server/Gamecontrollers"
+	"github.com/Jugendreisen/Tetris/server/Global"
+	"github.com/astaxie/beego"
 )
 
 type MainController struct {
@@ -40,7 +41,7 @@ func main() {
 	// WebSocket.
 	beego.Router("/tetris/IM/ws", &Gamecontrollers.WebSocketController{})
 	beego.Router("/tetris/IM/ws/socket", &Gamecontrollers.WebSocketController{}, "get:Socket")
-	StaticDir["/tetris/static"] = "static"
+	beego.SetStaticPath("/tetris/static", "static")
 	beego.Run()
 
 }

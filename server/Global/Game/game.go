@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	gameserver "github.com/Jugendreisen/Tetris/server"
 )
 type GameInit struct {
 	Side            int      `json:"side"`
@@ -34,7 +35,7 @@ var qMsgList = make(chan string, 100)
 func initBackground(){
 
 }
- func initgame(event server.IM_protocol) {
+ func initgame(event gameserver.IM_protocol) {
 	loop = true;
 	go GameRussia()
 	time.Sleep(40 * time.Millisecond)
@@ -414,7 +415,7 @@ func JudgeCollision_other( num int) bool{
 	return true;
 }
 
-func Start(event server.IM_protocol)(server.IM_protocol,bool){
+func Start(event gameserver.IM_protocol)(gameserver.IM_protocol,bool){
 	if false==loop && "start" == event.Msg{
 		initgame(event)
 	}
