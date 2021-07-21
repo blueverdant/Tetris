@@ -4,9 +4,9 @@ import (
 	_ "fmt"
 	"time"
 
-	"github.com/astaxie/beego"
 	"github.com/Jugendreisen/Tetris/server/Gamecontrollers"
 	"github.com/Jugendreisen/Tetris/server/Global"
+	"github.com/astaxie/beego"
 )
 
 type MainController struct {
