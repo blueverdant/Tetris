@@ -1,7 +1,7 @@
 package Gamecontrollers
 
 import (
-	"github.com/fv0008/AWS_Russia/server/Global"
+	"github.com/Jugendreisen/Tetris/server/Global"
 	"github.com/gorilla/websocket"
 	"net/http"
 )

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/fv0008/AWS_Russia/server/Gamecontrollers"
-	"github.com/fv0008/AWS_Russia/server/Global"
+	"github.com/Jugendreisen/Tetris/server/Gamecontrollers"
+	"github.com/Jugendreisen/Tetris/server/Global"
 )
 
 type MainController struct {

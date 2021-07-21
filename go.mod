@@ -1,4 +1,4 @@
-module github.com/fv0008/AWS_Russia
+module github.com/Jugendreisen/Tetris
 
 go 1.14
 
