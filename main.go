@@ -3,7 +3,7 @@ package Tetris
 import (
 	_ "fmt"
 	"time"
-	"github.com/astaxie/beego"
+
 	"tetris/server/Gamecontrollers"
 	"tetris/server/Global"
 )
