@@ -24,7 +24,7 @@ function reconnect(){
         alert("网络异常")
         reconnectcount = 1
     }
-    socket = new WebSocket('ws://' + window.location.host + '/tetris/IM/ws/socket?Socket='+SocketId);
+    socket = new WebSocket('wss://' + window.location.host + '/tetris/IM/ws/socket?Socket='+SocketId);
     config(socket)
 }
 
