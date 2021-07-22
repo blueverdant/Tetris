@@ -41,6 +41,8 @@ func main() {
 	// WebSocket.
 	beego.Router("/tetris/IM/ws", &Gamecontrollers2.WebSocketController{})
 	beego.Router("/tetris/IM/ws/socket", &Gamecontrollers2.WebSocketController{}, "get:Socket")
+	beego.Router("/tetris/IM/wss", &Gamecontrollers2.WebSocketController{})
+	beego.Router("/tetris/IM/wss/socket", &Gamecontrollers2.WebSocketController{}, "get:Socket")
 	beego.SetStaticPath("/tetris/static", "static")
 	beego.Run()
 
